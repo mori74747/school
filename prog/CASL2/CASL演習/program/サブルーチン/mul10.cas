@@ -1,0 +1,39 @@
+MAIN	START
+;
+; A番地の内容を値渡しで10倍する（値渡し）
+;
+	LD	GR1,A    ; GR1はA番地の値
+	CALL	MUL10V  ; (GR1)を10倍するサブルーチン
+	ST	GR1,A    ; 10倍した値をA番地に格納
+;
+; B番地の内容をアドレス渡しで10倍する（アドレス渡し）
+;
+	LAD	GR1,B      ; GR1はBの番地のアドレス
+	CALL	MUL10A   ; ((GR1))を10倍するサブルーチン
+;
+	RET
+A	DC	10        ; 実行後100になる
+B	DC	20	; 実行後200になる
+	END
+;
+; GR1 ← (GR1)×10 を行う
+;
+MUL10V	START
+	LD	GR2,GR1	; GR2は10倍するための作業用
+	SLL	GR1,3	; GR1←8(GR1)
+	SLL	GR2,1	; GR2←(GR1)×2
+	ADDL	GR1,GR2	; GR1← 8(GR1)+2(GR1)
+	RET          	; GR1は元の値の10倍
+	END
+;
+; (GR1) ← ((GR1))×10 を行う
+;
+MUL10A	START
+	LD	GR2,0,GR1 ; GR2に((GR1))を取り出す
+	LD	GR3,GR2   ; GR3は10倍するための作業用
+	SLL	GR2,3      ; GR2←8((GR1))
+	SLL	GR3,1      ; GR3←2((GR1))
+	ADDL	GR2,GR3   ; GR2← 8((GR1))+2((GR1))
+	ST	GR2,0,GR1 ; 10倍した値を((GR1))に格納
+	RET
+	END

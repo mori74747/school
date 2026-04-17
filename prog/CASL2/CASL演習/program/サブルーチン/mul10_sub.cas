@@ -1,0 +1,30 @@
+;
+; GR1に格納されている符号なし整数を10倍するサブルーチン
+; GR1 ← (GR1)×10 を行う
+;
+MUL10V	START
+	PUSH	0,GR2		; サブルーチン内で使う作業レジスタGR2の値を保存
+	LD	GR2,GR1
+	SLL	GR1,3
+	SLL	GR2,1
+	ADDL	GR1,GR2
+	POP	GR2		; 保存してあったGR2の値を復旧
+	RET
+;
+; GR1が示すアドレスに格納されている符号なし整数を10倍するサブルーチン
+; (GR1) ← ((GR1)) × 10 を行う
+;
+MUL10A	START
+	PUSH	0,GR2		; サブルーチン内で使う作業レジスタGR2の値を保存
+	PUSH	0,GR3		; サブルーチン内で使う作業レジスタGR3の値を保存
+	LD	GR2,0,GR1
+	LD	GR3,GR2
+	SLL	GR2,3
+	SLL	GR3,1
+	ADDL	GR2,GR3
+	ST	GR2,0,GR1
+	POP	GR3		; 保存してあったGR2,GR3の値を復旧
+	POP	GR2		; 値を復旧する順序は保存したときと逆順になることに注意
+	RET
+;
+	END

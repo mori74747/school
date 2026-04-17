@@ -1,0 +1,12 @@
+MAIN	START			; C←10(A)+(B) を行うプログラムだが、正しく動作しない
+	LD	GR1,A		; GR1はA番地の値
+	LD	GR2,B		; GR2はB番地の値
+	CALL	MUL10V		; GR1←10(GR1)	　　　… ここでGR1には10(A)が格納される	
+	ADDL	GR1,GR2		; GR1←10(GR1)+(GR2)　… GR2は(B)の値なので、GR1には10(A)+(B)が格納されるはず
+	ST	GR1,C
+	RET
+A	DC	10
+B	DC	50
+C	DS	1		; 実行後150になる？
+	RET
+	END

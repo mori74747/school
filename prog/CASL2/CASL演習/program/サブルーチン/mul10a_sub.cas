@@ -1,0 +1,13 @@
+;
+; GR1が示すアドレスに格納されている符号なし整数を10倍するサブルーチン
+; (GR1) ← ((GR1)) × 10 を行う
+;
+MUL10A	START
+	LD	GR2,0,GR1
+	LD	GR3,GR2
+	SLL	GR2,3
+	SLL	GR3,1
+	ADDL	GR2,GR3
+	ST	GR2,0,GR1
+	RET
+	END

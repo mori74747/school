@@ -1,0 +1,13 @@
+;
+; GR1に格納されている符号なし整数を10倍するサブルーチン
+; GR1 ← (GR1)×10 を行う
+;
+MUL10V	START
+	PUSH	0,GR2
+	LD	GR2,GR1
+	SLL	GR1,3
+	SLL	GR2,1
+	ADDL	GR1,GR2
+	POP	GR2
+	RET
+	END

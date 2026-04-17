@@ -1,0 +1,13 @@
+{
+  "name": "doryoku-fps-lan",
+  "version": "1.0.0",
+  "description": "LAN Multiplayer FPS in Three.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  }
+}

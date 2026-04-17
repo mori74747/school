@@ -1,0 +1,361 @@
+/* ============================================================
+    CSS変数（カラーテーマ）
+    色や共通値を変数にまとめることで一箇所の変更が全体に反映される
+============================================================ */
+:root {
+    --primary: #ff4757;
+    /* メインカラー（赤）: ゲームオーバーやHPバーに使用 */
+    --dark: #2f3542;
+    /* 暗い背景色 */
+    --light: #f1f2f6;
+    /* 明るいテキスト色 */
+    --ui-bg: rgba(47, 53, 66, 0.7);
+    /* 半透明のUI背景 */
+}
+
+/* ============================================================
+    リセット・基本設定
+    ブラウザのデフォルトスタイルを除去して統一する
+============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* paddingやborderをwidth/heightに含める */
+    user-select: none;
+    /* ゲーム中に文字が選択されないようにする */
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* スクロールバーを非表示にする */
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ============================================================
+    ゲームコンテナ・キャンバス
+    Three.jsの描画領域を画面全体に広げる
+============================================================ */
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+canvas#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ============================================================
+    照準（クロスヘア）
+    ゲーム中のみ表示され、画面中央に固定される
+============================================================ */
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    /* クリックを透過させてゲーム操作を妨げない */
+    z-index: 100;
+    display: none;
+    /* ポインターロック後にJSで表示する */
+}
+
+/* 円形の照準 */
+.reticle {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* ::before / ::after で十字線を描く（縦線と横線）*/
+.reticle::before,
+.reticle::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.reticle::before {
+    width: 2px;
+    height: 10px;
+}
+
+/* 縦線 */
+.reticle::after {
+    width: 10px;
+    height: 2px;
+}
+
+/* 横線 */
+
+/* ============================================================
+    弓チャージバー
+    弓を溜めているときに照準の下に細いバーが出現する
+============================================================ */
+#charge-bar-container {
+    position: absolute;
+    top: 30px;
+    /* 照準の下に配置 */
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    /* 非表示時は縮小 */
+    width: 60px;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    /* デフォルトは非表示（JSでopacity:1に変更）*/
+    transition: opacity 0.2s, transform 0.2s;
+    /* 表示・非表示をなめらかに */
+}
+
+/* チャージ量に応じて幅が伸びるバー（JSで width% を変更する）*/
+#charge-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================================
+    HUD（ヘッドアップディスプレイ）
+    ゲーム中に常時表示されるUI全体のラッパー
+============================================================ */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* HUD全体をクリック透過にしてゲーム操作を優先 */
+}
+
+/* 旧UI要素（現在は非表示）*/
+#ammo-ui,
+#durability-ui {
+    display: none;
+}
+
+/* ============================================================
+    HPバー（左下）
+============================================================ */
+#hp-ui {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* HP数値テキスト */
+#hp-value {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    /* ゲームらしい角ばったフォント */
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    min-width: 50px;
+    /* 数字が変わっても幅が揺れないよう固定 */
+}
+
+/* ============================================================
+    ホットバー（画面下部中央）
+    スロット8個を横並びに表示するアイテムバー
+============================================================ */
+#hotbar-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+#hotbar {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 3px solid #1e1e1e;
+    padding: 2px;
+    border-radius: 4px;
+    gap: 4px;
+}
+
+/* 各スロットのベーススタイル */
+.slot {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(139, 139, 139, 0.5);
+    border: 3px solid #373737;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    /* 内側の上左を明るく、下右を暗くしてMinecraft的な立体感を出す */
+    box-shadow: inset -3px -3px 0 rgba(0, 0, 0, 0.2), inset 3px 3px 0 rgba(255, 255, 255, 0.1);
+    transition: transform 0.1s ease;
+}
+
+/* 選択中スロット: 白い枠と拡大で目立たせる */
+.slot.selected {
+    border: 3px solid #ffffff;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+    /* 少し大きくして選択感を強調 */
+    z-index: 10;
+}
+
+/* 弓・矢スロットを区切る縦線 */
+.hotbar-separator {
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 5px 2px;
+}
+
+/* 特殊スロット（弓・矢）: 暗い青みがかった背景 */
+.slot.special {
+    background-color: rgba(40, 44, 52, 0.8);
+    border: 3px solid #4b6584;
+}
+
+/* 特殊スロットを選択中: 黄色い枠と光で差別化 */
+.slot.special.selected {
+    border: 3px solid #fffa65;
+    box-shadow: 0 0 15px rgba(255, 250, 101, 0.5);
+}
+
+/* スロット内のアイコン（絵文字またはテクスチャ画像）*/
+.slot .icon {
+    font-size: 32px;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.8));
+    /* 影でアイコンを見やすくする */
+}
+
+/* スタック数や耐久値などの数字（右下に表示）*/
+.slot .count {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 #000;
+    /* 影で読みやすくする */
+}
+
+/* HPバーのコンテナ（細長い背景バー）*/
+#hp-bar-container {
+    width: 300px;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(0, 0, 0, 0.8);
+    border-radius: 6px;
+    overflow: hidden;
+    /* 内側のバーが角丸から飛び出さないようにする */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* HPバーの塗りつぶし部分（幅と色がJSで変わる）*/
+#hp-bar-fill {
+    width: 100%;
+    height: 100%;
+    background-color: #2ed573;
+    /* 初期値: 緑（HP満タン）*/
+    transition: width 0.2s ease, background-color 0.2s ease;
+    /* 変化をなめらかに */
+}
+
+/* ============================================================
+    デバッグ情報（左上）
+    プレイヤーの現在座標をリアルタイム表示する
+============================================================ */
+#debug-info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-family: monospace;
+    font-size: 14px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+}
+
+/* ============================================================
+    オーバーレイスクリーン（タイトル・ゲームオーバー）
+    .active クラスを付けることで表示・非表示を切り替える
+============================================================ */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    /* 非表示中はクリックを無効化 */
+    transition: opacity 0.3s ease;
+}
+
+/* .active が付いたら表示してクリックを有効にする */
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* タイトルやゲームオーバーの大見出し */
+.screen h1 {
+    font-size: 72px;
+    margin-bottom: 20px;
+    color: var(--primary);
+    /* CSS変数の赤色 */
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 0 0 20px rgba(255, 71, 87, 0.6);
+    /* 赤いグロー効果 */
+}
+
+.screen p {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+/* 操作説明テキスト（グレーで控えめに）*/
+.controls {
+    font-size: 16px !important;
+    color: #a4b0be;
+    margin-top: 10px;
+}
+
+.result-icon {
+    font-size: 22px;
+}
+
+.result-name {
+    letter-spacing: 1px;
+}

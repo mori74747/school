@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マイクラ風FPS　「game.js」 — コード解説</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Unbounded:wght@300;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #111418;
+    --bg3: #181d24;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8ecf0;
+    --muted: #7a8a9a;
+    --accent: #4af0b0;
+    --accent2: #7b7ff5;
+    --accent3: #f0954a;
+    --accent4: #f04a7b;
+    --code-bg: #0d1117;
+    --cat-engine: #7b7ff5;
+    --cat-world: #4af0b0;
+    --cat-physics: #f04a7b;
+    --cat-player: #4ab8f0;
+    --cat-inventory: #f0c44a;
+    --cat-combat: #f0954a;
+    --cat-render: #b04af0;
+    --cat-network: #4af07b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6rem 5vw 4rem;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(74,240,176,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,240,176,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 30s linear infinite;
+  }
+
+  @keyframes gridDrift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(60px, 60px); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(74,240,176,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,127,245,0.1) 0%, transparent 70%);
+    bottom: 50px; left: -80px;
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 9vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.35s forwards;
+  }
+
+  .hero-title span {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.85rem, 2vw, 1.1rem);
+    color: var(--muted);
+    max-width: 560px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.5s forwards;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.65s forwards;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-num {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* ─── LAYOUT ─── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5vw;
+  }
+
+  section {
+    padding: 6rem 5vw;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 3rem;
+  }
+
+  /* ─── ARCHITECTURE OVERVIEW ─── */
+  .arch-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .arch-cell {
+    background: var(--bg2);
+    padding: 1.75rem 1.5rem;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .arch-cell:hover { background: var(--bg3); }
+
+  .arch-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .arch-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .arch-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FUNCTION CARDS ─── */
+  .fn-section { background: var(--bg); }
+
+  .fn-category {
+    margin-bottom: 5rem;
+  }
+
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .cat-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .cat-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .fn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .fn-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+
+  .fn-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+  }
+
+  .fn-card.open { border-color: var(--border2); }
+
+  .fn-card-head {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .fn-card-left { flex: 1; min-width: 0; }
+
+  .fn-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    word-break: break-all;
+  }
+
+  .fn-short {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .fn-toggle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--muted);
+    transition: all 0.2s;
+    background: var(--bg3);
+  }
+
+  .fn-card.open .fn-toggle {
+    transform: rotate(45deg);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .fn-body {
+    display: none;
+    padding: 0 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .fn-card.open .fn-body { display: block; }
+
+  .fn-desc {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: #c5cdd5;
+    padding: 1rem 0 0.75rem;
+  }
+
+  .fn-detail-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .fn-params {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .param-row {
+    display: flex;
+    gap: 10px;
+    font-size: 12.5px;
+  }
+
+  .param-name {
+    font-family: 'Space Mono', monospace;
+    color: var(--accent2);
+    min-width: 90px;
+    flex-shrink: 0;
+    font-size: 11.5px;
+  }
+
+  .param-desc { color: var(--muted); line-height: 1.5; }
+
+  .fn-returns {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .fn-returns code {
+    font-family: 'Space Mono', monospace;
+    color: var(--accent3);
+    font-size: 11.5px;
+    background: rgba(240,149,74,0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .fn-detail {
+    font-size: 13px;
+    line-height: 1.85;
+    color: #a8b8c8;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid;
+  }
+
+  .fn-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 1rem;
+  }
+
+  .fn-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .flow-node {
+    width: 100%;
+    max-width: 480px;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    background: var(--bg3);
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .flow-node:hover { border-color: var(--accent); }
+
+  .flow-node-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .flow-node-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  .flow-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 4px 0;
+  }
+
+  .flow-arrow-line {
+    width: 1px;
+    height: 20px;
+    background: var(--border2);
+  }
+
+  .flow-arrow-tip {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid var(--border2);
+  }
+
+  .flow-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin: 2px 0;
+  }
+
+  .flow-branch {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .flow-branch-node {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg3);
+    text-align: center;
+  }
+
+  .flow-branch-node-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .flow-branch-node-desc {
+    font-size: 10.5px;
+    color: var(--muted);
+  }
+
+  /* ─── DATA FLOW ─── */
+  .data-section { background: var(--bg); }
+
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .data-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .data-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .data-card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .data-card-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .data-code {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+    overflow-x: auto;
+    line-height: 1.7;
+    color: #c5cdd5;
+  }
+
+  .data-code .kw { color: var(--accent2); }
+  .data-code .str { color: var(--accent); }
+  .data-code .num { color: var(--accent3); }
+  .data-code .cmt { color: var(--muted); }
+
+  /* ─── NAV ─── */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1rem 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,12,15,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* ─── SEARCH ─── */
+  .search-section {
+    padding: 2rem 5vw;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 57px;
+    z-index: 50;
+  }
+
+  .search-wrap {
+    max-width: 500px;
+    position: relative;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    padding: 0.7rem 1rem 0.7rem 2.5rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--muted); }
+
+  /* ─── CAT FILTER ─── */
+  .cat-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+
+  .cat-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+
+  .cat-btn:hover, .cat-btn.active {
+    color: var(--bg);
+    border-color: transparent;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 3rem 5vw;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  .footer-logo span {
+    color: var(--accent);
+  }
+
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ─── UTILITY ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .flow-branch { grid-template-columns: 1fr; }
+    .arch-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">game.js</div>
+  <ul class="nav-links">
+    <li><a href="#architecture">アーキテクチャ</a></li>
+    <li><a href="#flow">ゲームループ</a></li>
+    <li><a href="#functions">関数一覧</a></li>
+    <li><a href="#state">状態管理</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-eyebrow">ソースコード解説ドキュメント</div>
+  <h1 class="hero-title">
+    マイクラ風FPS<span>game.js</span>
+  </h1>
+  <p class="hero-subtitle">Three.js製3Dボクセルゲームエンジン<br>— 全2,084行のコード完全解説</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">21</span>
+      <span class="stat-label">関数 / クラス</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">8</span>
+      <span class="stat-label">システム</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">2084</span>
+      <span class="stat-label">行数</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">60fps</span>
+      <span class="stat-label">ターゲット</span>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section" id="architecture">
+  <div class="container">
+    <div class="section-label reveal">システム構成</div>
+    <h2 class="section-title reveal">8つのサブシステム</h2>
+    <div class="arch-grid reveal">
+      <div class="arch-cell">
+        <div class="arch-icon">⚙️</div>
+        <div class="arch-name" style="color:var(--cat-engine)">エンジン初期化</div>
+        <div class="arch-desc">WebGLレンダラー・シーン・カメラ・ライトのセットアップ。テクスチャアトラス生成。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🌍</div>
+        <div class="arch-name" style="color:var(--cat-world)">ワールド生成</div>
+        <div class="arch-desc">チャンク方式のボクセルワールド。プロシージャル地形・木・石構造物を自動生成。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🔴</div>
+        <div class="arch-name" style="color:var(--cat-physics)">物理・衝突</div>
+        <div class="arch-desc">AABB衝突判定・重力・空気抵抗・壁ジャンプ。レイキャストによるブロック選択。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🎮</div>
+        <div class="arch-name" style="color:var(--cat-player)">プレイヤー操作</div>
+        <div class="arch-desc">WASD移動・ダッシュ・ジャンプ・採掘・ブロック設置。視点マウス制御。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🎒</div>
+        <div class="arch-name" style="color:var(--cat-inventory)">インベントリ</div>
+        <div class="arch-desc">8スロットホットバー。ドロップアイテムの物理・自動回収・スタック管理。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🏹</div>
+        <div class="arch-name" style="color:var(--cat-combat)">戦闘・弓矢</div>
+        <div class="arch-desc">チャージ式弓矢。矢の放物線物理・衝突・ブロックダメージ・ひび割れ演出。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🖥️</div>
+        <div class="arch-name" style="color:var(--cat-render)">描画・UI</div>
+        <div class="arch-desc">フェイスカリングで最小ポリゴン数を実現。ホットバー・HPバー・チャージバーのUI。</div>
+      </div>
+      <div class="arch-cell">
+        <div class="arch-icon">🌐</div>
+        <div class="arch-name" style="color:var(--cat-network)">マルチプレイ</div>
+        <div class="arch-desc">Socket.IOでプレイヤー位置・ブロック変更・矢の発射をリアルタイム同期。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAME LOOP FLOW -->
+<section class="flow-section" id="flow">
+  <div class="container">
+    <div class="section-label reveal">処理の流れ</div>
+    <h2 class="section-title reveal">ゲームループの構造</h2>
+    <div class="flow-diagram reveal">
+
+      <div class="flow-node" style="border-color:var(--cat-engine);max-width:300px">
+        <div class="flow-node-name" style="color:var(--cat-engine)">requestAnimationFrame</div>
+        <div class="flow-node-desc">ブラウザが毎フレーム呼び出す</div>
+      </div>
+      <div class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-tip"></div></div>
+
+      <div class="flow-node" style="border-color:var(--accent2)">
+        <div class="flow-node-name" style="color:var(--accent2)">gameLoop(now)</div>
+        <div class="flow-node-desc">deltaTime計算・isRunningチェック</div>
+      </div>
+      <div class="flow-arrow">
+        <div class="flow-arrow-line"></div>
+        <div class="flow-label">毎フレーム</div>
+        <div class="flow-arrow-line"></div>
+        <div class="flow-arrow-tip"></div>
+      </div>
+
+      <div class="flow-branch">
+        <div class="flow-branch-node" style="border-color:var(--cat-world)">
+          <div class="flow-branch-node-name" style="color:var(--cat-world)">updateChunks()</div>
+          <div class="flow-branch-node-desc">チャンク生成・解放・再構築</div>
+        </div>
+        <div class="flow-branch-node" style="border-color:var(--cat-player)">
+          <div class="flow-branch-node-name" style="color:var(--cat-player)">update(dt)</div>
+          <div class="flow-branch-node-desc">移動・物理・採掘・弓・UI</div>
+        </div>
+        <div class="flow-branch-node" style="border-color:var(--cat-render)">
+          <div class="flow-branch-node-name" style="color:var(--cat-render)">render()</div>
+          <div class="flow-branch-node-desc">カメラ同期・シーン描画</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-tip"></div></div>
+
+      <div class="flow-node" style="border-color:var(--border2);opacity:.6;max-width:300px">
+        <div class="flow-node-name">次フレームへ ↻</div>
+        <div class="flow-node-desc">requestAnimationFrame(gameLoop)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCTION REFERENCE -->
+<section class="fn-section" id="functions">
+  <div class="container">
+    <div class="section-label reveal">リファレンス</div>
+    <h2 class="section-title reveal">全関数の詳細解説</h2>
+  </div>
+</section>
+
+<!-- SEARCH + FILTER -->
+<div class="search-section">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="関数名・キーワードで検索...">
+  </div>
+  <div class="cat-filter" id="catFilter"></div>
+</div>
+
+<!-- FN CARDS CONTAINER -->
+<section style="padding:2rem 5vw 5rem; background:var(--bg)">
+  <div class="container" id="fnContainer"></div>
+</section>
+
+<!-- STATE -->
+<section class="data-section" id="state">
+  <div class="container">
+    <div class="section-label reveal">データ構造</div>
+    <h2 class="section-title reveal">グローバル状態管理 (gameState)</h2>
+    <div class="data-grid">
+      <div class="data-card reveal" style="">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--cat-player)"></div>
+        <div class="data-card-title" style="color:var(--cat-player)">player</div>
+        <div class="data-card-body">プレイヤーの全状態を保持するオブジェクト。位置・カメラ角度・HP・速度・接地状態・ダッシュフラグなどをまとめて管理。</div>
+        <div class="data-code"><span class="kw">player</span>: {
+  x, y, z,          <span class="cmt">// 座標</span>
+  pitch, yaw,        <span class="cmt">// 視点角度</span>
+  health: <span class="num">100</span>,
+  velocity: {x,y,z}, <span class="cmt">// 速度ベクトル</span>
+  isGrounded,
+  isDashing,
+  lastJumpTime
+}</div>
+      </div>
+      <div class="data-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--cat-inventory)"></div>
+        <div class="data-card-title" style="color:var(--cat-inventory)">inventory / ammo</div>
+        <div class="data-card-body">8スロットのインベントリ配列。スロット0=弓、スロット1=矢は固定。2〜7がブロック・アイテム用スロット。</div>
+        <div class="data-code"><span class="kw">inventory</span>: [
+  { type: <span class="str">'bow'</span>, count: <span class="num">1</span> },
+  { type: <span class="str">'arrow'</span>, count: <span class="num">20</span> },
+  { type: <span class="str">'block'</span>, blockId, count },
+  { type: <span class="str">'empty'</span> },
+  <span class="cmt">// ...スロット7まで</span>
+]</div>
+      </div>
+      <div class="data-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--cat-combat)"></div>
+        <div class="data-card-title" style="color:var(--cat-combat)">arrows / enemies</div>
+        <div class="data-card-body">飛行中の矢と敵エンティティの配列。毎フレームupdateArrows・render内でメッシュ数をこの配列の長さに合わせて動的に調整。</div>
+        <div class="data-code"><span class="kw">arrows</span>: [{
+  x, y, z,          <span class="cmt">// 現在位置</span>
+  vx, vy, vz,       <span class="cmt">// 速度</span>
+  damage, hit,
+  life, ownerId
+}]</div>
+      </div>
+      <div class="data-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--cat-world)"></div>
+        <div class="data-card-title" style="color:var(--cat-world)">blockHealth / droppedItems</div>
+        <div class="data-card-body">ブロックのHPはMapで "x,y,z" キーで管理。矢が当たった石ブロックはHP50%でひび石化。ドロップアイテムも配列で管理。</div>
+        <div class="data-code"><span class="kw">blockHealth</span>: <span class="kw">new</span> Map()
+<span class="cmt">// キー: "x,y,z"</span>
+<span class="cmt">// 値: HP数値 (石 = 60)</span>
+
+<span class="kw">droppedItems</span>: [{
+  x, y, z, vx, vy, vz,
+  mesh, life: <span class="num">600</span>
+}]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">game<span>.js</span></div>
+  <div class="footer-text">Three.js Voxel Game Engine — コード解説ドキュメント</div>
+</footer>
+
+<script>
+const CATS = {
+  engine:    { label: 'エンジン初期化',  color: '#7b7ff5' },
+  world:     { label: 'ワールド生成',   color: '#4af0b0' },
+  physics:   { label: '物理・衝突',    color: '#f04a7b' },
+  player:    { label: 'プレイヤー操作', color: '#4ab8f0' },
+  inventory: { label: 'インベントリ',  color: '#f0c44a' },
+  combat:    { label: '戦闘・弓矢',    color: '#f0954a' },
+  render:    { label: '描画・UI',      color: '#b04af0' },
+  network:   { label: 'マルチプレイ',  color: '#4af07b' },
+};
+
+const FNS = [
+  { cat:'engine', name:'エンジン初期化', short:'Three.jsのシーン・カメラ・ライトをセットアップ',
+    desc:'HTMLの &lt;canvas&gt; 要素にWebGLレンダラーを接続し、シーン・カメラ・ライトを初期化するコードブロック。関数ではなくトップレベルの処理として実行される。',
+    params:[], returns:'なし（起動時に一度だけ実行）',
+    detail:'レンダラーはアンチエイリアスなしで高速描画。カメラはFOV60度の透視投影で、回転順を YXZ にすることで上下左右の視点操作が自然になる。半球ライト（空と地面の環境光）と指向性ライト（太陽光）の2灯構成。',
+    tags:['THREE.WebGLRenderer','THREE.PerspectiveCamera','HemisphereLight','DirectionalLight']},
+
+  { cat:'engine', name:'createTextureAtlas()', short:'全ブロックのテクスチャを1枚のCanvasに手描き生成',
+    desc:'256×256pxのHTML Canvasに全ブロックのテクスチャをCanvas 2D APIで手描きし、Three.jsのCanvasTextureとして返す。外部画像ファイルを使わない自己完結型の実装。',
+    params:[], returns:'THREE.CanvasTexture — 全ブロック共通のテクスチャアトラス',
+    detail:'4×4グリッドで64pxタイルを配置。行0に草側面/草上面/土/石、行1にひび石/木側面/葉/白壁、行2に木上面/棒を描画。magFilterをNearestにしてピクセルアートらしい外観を保つ。葉は30%を透明にするランダムピクセル塗りで自然な見た目を演出。',
+    tags:['CanvasRenderingContext2D','CanvasTexture','UV','テクスチャアトラス','NearestFilter']},
+
+  { cat:'world', name:'Chunk クラス', short:'16×32×16ブロックのデータをUint8Arrayで管理',
+    desc:'チャンク1個分のブロックデータをUint8Array（1バイト/ブロック = 8192バイト）でコンパクトに保持するクラス。',
+    params:[{name:'cx', desc:'チャンクのX座標インデックス'},{name:'cz', desc:'チャンクのZ座標インデックス'}],
+    returns:'Chunk インスタンス',
+    detail:'フラット配列でのインデックス計算は index = x + z*16 + y*256。getBlockLocal()は範囲外を0（空気）として安全に返す。setBlockLocal()はデータを変更してneedsUpdateフラグを立て、次フレームでメッシュが再構築されるようにする。',
+    tags:['Uint8Array','フラット配列','needsUpdate','メモリ効率']},
+
+  { cat:'world', name:'generateChunk(cx, cz)', short:'チャンク1個の地形・木・石構造物を生成',
+    desc:'チャンク座標を受け取り、地形・壁・木・石構造物を含むブロックデータを生成してchunksマップに登録する。',
+    params:[{name:'cx', desc:'チャンクX座標インデックス'},{name:'cz', desc:'チャンクZ座標インデックス'}],
+    returns:'Chunk インスタンス',
+    detail:'Y=5が地面で草、地下の浅い部分が土、深い部分が石。ワールドは3×3部屋構成で内壁・外壁は白壁。内壁には3ブロック幅の通路が空いている。シード値ベースの疑似乱数で石の壁（15%確率）と木（6%確率）をランダム配置。木は幹＋球形の葉を合成。',
+    tags:['プロシージャル生成','疑似乱数','シード値','木の生成']},
+
+  { cat:'world', name:'buildChunkMesh(chunk)', short:'フェイスカリングで最小ポリゴン数のメッシュを構築',
+    desc:'チャンクの全ブロックを走査し、空気に隣接した面だけに三角形ポリゴンを追加する「フェイスカリング」でThree.jsメッシュを構築する。最もCPU負荷が高い処理。',
+    params:[{name:'chunk', desc:'再構築対象のChunkインスタンス'}],
+    returns:'なし（chunk.mesh を更新してシーンに追加）',
+    detail:'全6方向を検査し、隣のブロックが空気または葉（透明）なら面を追加。1面 = 2三角形 = 6頂点。UV座標はgetUVs()でブロック種類と面方向からアトラス上の位置を算出。既存メッシュはgeometry.dispose()でGPUリソースを解放してから差し替える。',
+    tags:['フェイスカリング','BufferGeometry','BufferAttribute','UV','パフォーマンス']},
+
+  { cat:'world', name:'updateChunks(playerX, playerZ)', short:'チャンクの生成・解放・再構築を毎フレーム管理',
+    desc:'毎フレーム呼ばれ、プレイヤー位置に基づいてチャンクのライフサイクル全体（生成・アンロード・メッシュ再構築）を管理する。',
+    params:[{name:'playerX', desc:'プレイヤーのワールドX座標'},{name:'playerZ', desc:'プレイヤーのワールドZ座標'}],
+    returns:'なし',
+    detail:'① 未生成チャンクをgenerateChunk()で生成。② プレイヤーからRENDER_DISTANCE+1チャンク超のものをアンロード（メッシュ解放・Mapから削除）。③ needsUpdateフラグが立っているチャンクをbuildChunkMesh()で再構築。',
+    tags:['チャンク管理','ストリーミング','メモリ管理','RENDER_DISTANCE']},
+
+  { cat:'world', name:'getBlock(x, y, z)', short:'ワールド座標でブロックIDを取得',
+    desc:'ワールド座標を受け取り、対応するチャンクを特定してブロックIDを返す。チャンクをまたいでも正しく動作する最頻出関数。',
+    params:[{name:'x, y, z', desc:'ワールド座標（整数を想定）'}],
+    returns:'number — ブロックID（0=空気）',
+    detail:'負座標の剰余計算に注意が必要で ((x % SIZE) + SIZE) % SIZE でローカル座標を正しく取得。Y範囲外・チャンク未生成は常に0を返す。raycast・checkCollision・buildChunkMeshなど多くの場所から呼ばれる。',
+    tags:['頻出','剰余計算','ワールド→チャンク変換']},
+
+  { cat:'world', name:'setBlock(x, y, z, val, sync)', short:'ブロックを設置・破壊してサーバーに同期',
+    desc:'ワールド座標でブロックを変更し、破壊時はアイテムをドロップ、sync=trueのときSocket.IOで他プレイヤーに通知する。',
+    params:[{name:'x, y, z', desc:'ワールド座標'},{name:'val', desc:'ブロックID（0=破壊）'},{name:'sync', desc:'trueのとき他プレイヤーに送信'}],
+    returns:'なし',
+    detail:'破壊時（val=0）はブロック種類に応じてspawnDroppedItem()を呼ぶ。葉→棒、木→棒、石→石アイテム。チャンク境界上（lx=0 or 15など）のブロック変更時は隣接チャンクのneedsUpdateも立て、境界の見た目のズレを防ぐ。',
+    tags:['破壊','設置','ドロップ','Socket.IO同期','境界チャンク']},
+
+  { cat:'physics', name:'checkCollision(px, py, pz)', short:'AABB衝突判定でブロックとの重なりを検出',
+    desc:'指定位置にプレイヤーが存在した場合に固体ブロックと重なるかどうかを12点のAABBで判定する。移動前の仮位置で呼ぶことで衝突を事前に弾く。',
+    params:[{name:'px, py, pz', desc:'チェックするプレイヤーの仮位置'}],
+    returns:'boolean — 重なっている場合 true',
+    detail:'水平は±0.3(margin)、垂直は−1.55〜+0.2の範囲で足元・腰・頭部の3高さ×四隅4点=12点を確認。X/Y/Z軸を独立してチェックするため、壁に沿ったスライド移動（壁ずり）が自然に発生する。',
+    tags:['AABB','衝突判定','壁ずり','物理演算']},
+
+  { cat:'physics', name:'raycast(origin, dir, maxDist)', short:'光線を飛ばしてヒットしたブロックと面法線を返す',
+    desc:'始点から方向ベクトルに沿って0.05刻みで進み、最初にヒットしたブロックとその面の法線を返す。ブロック選択・壁ジャンプ・照準に使用。',
+    params:[{name:'origin', desc:'{x,y,z} — レイの始点'},{name:'dir', desc:'{x,y,z} — 進む方向（正規化済み）'},{name:'maxDist', desc:'最大検索距離（単位: ブロック）'}],
+    returns:'{hit, x, y, z, norm} — ヒット情報と面の法線ベクトル',
+    detail:'単純なステップ法（ブルートフォース）を採用。精度よりシンプルさを優先した実装。直前の空気ブロック座標との差分で法線 [nx, ny, nz] を計算。この法線はブロック設置時の「隣の空きスペース特定」にも利用される。',
+    tags:['レイキャスト','ブロック選択','ステップ法','法線']},
+
+  { cat:'player', name:'update(deltaTime)', short:'毎フレームのゲームロジック全体を担当するメイン関数',
+    desc:'WASD移動・ダッシュ・空中制御・重力・ジャンプ・壁ジャンプ・採掘・弓チャージ・HP表示・落下死など、プレイヤーに関するほぼすべてのロジックを更新する。',
+    params:[{name:'deltaTime', desc:'前フレームからの経過時間（秒）'}],
+    returns:'なし',
+    detail:'地上は即時最高速度、空中は緩やかな加速+空気抵抗の2段階移動。壁ジャンプは3方向レイキャストで壁を検出し法線方向に弾き飛ばす。採掘はブロック種類ごとに所要時間（木1秒・石2秒・葉0.5秒）を設定。HP残量で HPバーの色を緑→オレンジ→赤に動的変化させる。',
+    tags:['移動','物理','採掘','壁ジャンプ','UI更新','最重要関数']},
+
+  { cat:'player', name:'placeBlock(tx, ty, tz, normal, blockId)', short:'ブロック設置の全ロジックを担当',
+    desc:'ターゲットブロックの法線方向に1つずらした位置へ新しいブロックを設置する。プレイヤーとの重複チェックと既存ブロックチェックを行う。',
+    params:[{name:'tx, ty, tz', desc:'ターゲットブロックの座標'},{name:'normal', desc:'面の法線 [nx, ny, nz]'},{name:'blockId', desc:'設置するブロックID'}],
+    returns:'boolean — 設置に成功したか',
+    detail:'設置候補位置 = ターゲット座標 + 法線。プレイヤーAABB（幅0.8×高さ1.5）との重複を確認してめり込みを防止。既存ブロックがある場合も拒否。全チェック通過後にsetBlock()を呼ぶ。',
+    tags:['ブロック設置','AABB','法線ベクトル']},
+
+  { cat:'player', name:'canPlaceBlock()', short:'設置条件を事前に全件チェック',
+    desc:'現在の選択スロット・ブロック数・カーソル位置・ブロックIDを確認し、設置可能な状態かを判定する。',
+    params:[], returns:'boolean — 設置可能なら true',
+    detail:'① 選択スロットがブロック種類か ② ブロック数が1以上か ③ カーソルが向いているブロックがあるか ④ PLACEABLE_BLOCKSリストに含まれるか の4条件をチェック。すべて通過した場合のみtrueを返す。',
+    tags:['バリデーション','設置条件','事前チェック']},
+
+  { cat:'player', name:'executeBlockPlacement()', short:'設置を実行してインベントリとUIを同期',
+    desc:'canPlaceBlock()でチェック後にplaceBlock()を呼び、成功したらインベントリのブロック数を減らしてUIを更新する。右クリックイベントから直接呼ばれる。',
+    params:[], returns:'boolean — 設置に成功したか',
+    detail:'設置成功時はcurrentItem.count--。countが0になったらスロットをemptyに初期化。その後updateHotbarUI()とupdateHeldItemMesh()でUI・3D手元アイテムを同期する。',
+    tags:['設置実行','インベントリ更新','UI同期']},
+
+  { cat:'combat', name:'shootArrow()', short:'溜め量に応じた速度・ダメージで矢を発射',
+    desc:'溜め量(gameState.charge)に応じた速度とダメージで矢を生成し、gameState.arrowsに追加してSocket.IOでサーバーに送信する。',
+    params:[], returns:'なし',
+    detail:'溜め量0のとき速度10 m/s・ダメージ5、フル溜め(1.0)で速度38 m/s・ダメージ30。カメラのpitch/yawから進行方向ベクトルを計算。矢がない・弓が壊れているときは早期リターン。発射後は矢数と弓耐久値をそれぞれ1減らす。',
+    tags:['弓','発射','チャージ','ダメージ計算','Socket.IO']},
+
+  { cat:'combat', name:'updateArrows(deltaTime)', short:'全矢の物理・衝突・ダメージ・回収を毎フレーム処理',
+    desc:'毎フレーム呼ばれ、飛行中の全矢について重力・衝突・敵へのダメージ・プレイヤー回収・寿命消滅をまとめて処理する。',
+    params:[{name:'deltaTime', desc:'前フレームからの経過時間（秒）'}],
+    returns:'なし',
+    detail:'① 敵との距離判定→ダメージ ② 自/他プレイヤー衝突判定 ③ 重力適用・座標更新 ④ 先端の移動経路を細かく分割した精密ブロック衝突判定 ⑤ 石ブロックへのダメージ（HP50%以下でひび石化）の順で処理。刺さった矢はブロックが壊れると落下開始。',
+    tags:['矢の物理','衝突','ダメージ','回収','ひび石']},
+
+  { cat:'inventory', name:'spawnDroppedItem(x, y, z, itemId)', short:'壊したブロックからアイテムを1〜2個ランダムドロップ',
+    desc:'指定座標に1〜2個のアイテムを生成し、3Dメッシュを作成してゲーム世界に落とす。',
+    params:[{name:'x, y, z', desc:'ドロップ位置'},{name:'itemId', desc:'ブロックID（整数）またはアイテム名（文字列）'}],
+    returns:'なし',
+    detail:'水平方向へのランダム飛び散り速度と上方向初速を与えてバラまき効果を演出。棒はBoxGeometry(0.1, 0.45, 0.1)の細長い形状で45度傾けて配置。テクスチャはUVを手動で書き換えてアトラスの該当タイルを使用。600フレームの寿命カウンター付き。',
+    tags:['ドロップ','アイテム','物理','テクスチャUV','寿命']},
+
+  { cat:'inventory', name:'updateDroppedItems(deltaTime)', short:'落下アイテムの物理・浮遊アニメーション・回収を処理',
+    desc:'毎フレーム呼ばれ、ワールドに落ちているアイテムの重力・地面衝突・浮遊アニメーション・プレイヤー自動回収・寿命消滅を処理する。',
+    params:[{name:'deltaTime', desc:'前フレームからの経過時間（秒）'}],
+    returns:'なし',
+    detail:'重力値は通常の3倍（−0.04/frame）で素早く落下。着地後は正弦波（sin）で上下に浮遊、Y軸回転で常に目立つアニメーションを付与。プレイヤーとの距離が1.5ブロック以内になるとcollectItem()で自動回収。後ろからループ（i--）してspliceを安全に実行。',
+    tags:['アイテム物理','回収','sin波アニメーション']},
+
+  { cat:'inventory', name:'collectItem(itemId)', short:'アイテムをインベントリのスロット2〜7に追加',
+    desc:'アイテムIDを受け取り、インベントリのスロット2〜7に対してスタックまたは新規追加を試みる。',
+    params:[{name:'itemId', desc:'ブロックID（整数）またはアイテム名（文字列）'}],
+    returns:'boolean — 追加に成功したか',
+    detail:'スロット0は弓、スロット1は矢の固定スロット。まず同型スロットを探してスタックし、なければ最初の空スロットに挿入。インベントリが満杯なら false を返し、地面のアイテムは回収されない。',
+    tags:['インベントリ','スタック','スロット管理']},
+
+  { cat:'render', name:'updateHeldItemMesh()', short:'選択スロットに合わせて手元の3Dモデルを切り替え',
+    desc:'選択中スロットのアイテムに合わせて、カメラに追従するheldItemContainerの子メッシュを切り替える。',
+    params:[], returns:'なし',
+    detail:'ブロック: アトラスUVを貼った立方体を傾けて表示。棒: 茶色の細い直方体を45度傾けて表示。弓: BoxGeometry3パーツ（本体＋上下の弓なり部分）をGroupで合成。矢: 棒＋ConeGeometry矢じりをGroupで合成。前回のメッシュはremove()で削除してからadd()で追加。',
+    tags:['手持ちアイテム','3D表示','カメラアタッチ','Group']},
+
+  { cat:'render', name:'updateHotbarUI()', short:'画面下部ホットバーのアイコン・数字・選択枠を同期',
+    desc:'インベントリの現在状態を画面下部のホットバーHTMLスロットにすべて反映する。',
+    params:[], returns:'なし',
+    detail:'石・棒・ブロックはCSSでテクスチャアトラスを400%拡大して切り抜いて表示。弓と矢は絵文字（🏹・⤅）で表示。数字は弓→耐久値、矢→残弾数、それ以外→スタック数。選択スロットはCSSクラス "selected" でハイライト。',
+    tags:['ホットバー','UI','CSSテクスチャ切り抜き']},
+
+  { cat:'render', name:'render()', short:'カメラ同期・エンティティ更新・シーン描画',
+    desc:'カメラをプレイヤー位置に合わせ、ブロック選択枠・矢・敵のメッシュ数を同期してからrenderer.render()を呼ぶ。',
+    params:[], returns:'なし',
+    detail:'矢と敵はgameState配列の長さに合わせてwhile文でメッシュをプール方式で増減。過剰なメッシュはpop()→scene.remove()、不足分はpush()→scene.add()。選択枠はtargetBlock.hitがtrueのときだけvisible=trueにする。',
+    tags:['レンダリング','エンティティプール','カメラ同期']},
+
+  { cat:'render', name:'gameLoop(now)', short:'requestAnimationFrameで全システムを毎フレーム駆動',
+    desc:'ブラウザのアニメーションフレームに合わせて呼ばれるメインループ。deltaTimeを計算してupdateChunks・update・renderを順番に呼ぶ。',
+    params:[{name:'now', desc:'performance.now()が渡すタイムスタンプ（ミリ秒）'}],
+    returns:'なし（自分自身をrequestAnimationFrameで再登録）',
+    detail:'isRunning=falseのとき即リターンしてループを停止。deltaTime = (now - lastTime) / 1000 でミリ秒→秒変換。処理順は ① updateChunks → ② update → ③ render → ④ 次フレーム予約。',
+    tags:['ゲームループ','requestAnimationFrame','deltaTime','isRunning']},
+
+  { cat:'network', name:'addOtherPlayer(id, playerInfo)', short:'他プレイヤーのメッシュをシーンに追加',
+    desc:'ソケットIDと初期位置を受け取り、ランダムカラーのBoxGeometryメッシュを生成してotherPlayerGroupに追加する。',
+    params:[{name:'id', desc:'Socket.IOのソケットID'},{name:'playerInfo', desc:'{x, y, z} 初期位置'}],
+    returns:'なし',
+    detail:'人型に近い 0.8×1.8×0.8 の直方体にMath.random()*0xffffffでランダムカラーを付けて識別しやすくする。接続イベント(currentPlayers)・入室イベント(newPlayer)の両方から呼ばれる。切断時はplayerDisconnectedイベントでメッシュを削除。',
+    tags:['Socket.IO','マルチプレイヤー','メッシュ生成','ランダムカラー']},
+];
+
+let activeCat = 'all';
+let query = '';
+
+function getColor(cat){ return CATS[cat]?.color || '#7a8a9a'; }
+
+// Build cat buttons
+const catFilter = document.getElementById('catFilter');
+const allBtn = document.createElement('button');
+allBtn.className = 'cat-btn active';
+allBtn.textContent = 'すべて';
+allBtn.style.setProperty('--c', '#e8ecf0');
+allBtn.onclick = () => setCat('all', allBtn);
+catFilter.appendChild(allBtn);
+
+Object.entries(CATS).forEach(([key, val]) => {
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn';
+  btn.textContent = val.label;
+  btn.style.background = 'transparent';
+  btn.onclick = () => setCat(key, btn);
+  catFilter.appendChild(btn);
+});
+
+function setCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = '';
+    b.style.color = '';
+  });
+  btn.classList.add('active');
+  if (cat !== 'all') {
+    btn.style.background = CATS[cat].color;
+    btn.style.color = '#0a0c0f';
+    btn.style.borderColor = 'transparent';
+  } else {
+    btn.style.background = 'var(--bg3)';
+    btn.style.color = 'var(--text)';
+  }
+  renderCards();
+}
+
+// Category order for rendering
+const CAT_ORDER = ['engine','world','physics','player','inventory','combat','render','network'];
+
+function renderCards() {
+  const container = document.getElementById('fnContainer');
+  container.innerHTML = '';
+  const q = query.toLowerCase();
+
+  const filtered = FNS.filter(f => {
+    const matchCat = activeCat === 'all' || f.cat === activeCat;
+    const matchQ = !q || f.name.toLowerCase().includes(q) || f.short.includes(q) ||
+      f.desc.toLowerCase().includes(q) || f.tags.some(t => t.toLowerCase().includes(q));
+    return matchCat && matchQ;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = '<div style="color:var(--muted);font-family:Space Mono,monospace;font-size:13px;padding:2rem 0;text-align:center">該当する関数が見つかりません</div>';
+    return;
+  }
+
+  const bycat = {};
+  CAT_ORDER.forEach(c => bycat[c] = []);
+  filtered.forEach(f => { if(bycat[f.cat]) bycat[f.cat].push(f); });
+
+  CAT_ORDER.forEach(cat => {
+    const fns = bycat[cat];
+    if (!fns.length) return;
+    const col = getColor(cat);
+
+    const section = document.createElement('div');
+    section.className = 'fn-category';
+
+    section.innerHTML = `
+      <div class="cat-header">
+        <div class="cat-dot" style="background:${col}"></div>
+        <div class="cat-title">${CATS[cat].label}</div>
+        <div class="cat-count">${fns.length} 個</div>
+      </div>
+      <div class="fn-grid" id="grid-${cat}"></div>
+    `;
+    container.appendChild(section);
+
+    const grid = section.querySelector(`#grid-${cat}`);
+    fns.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'fn-card';
+
+      const paramsHTML = f.params.length
+        ? f.params.map(p => `<div class="param-row"><span class="param-name">${p.name}</span><span class="param-desc">${p.desc}</span></div>`).join('')
+        : '<div style="font-size:12px;color:var(--muted)">引数なし</div>';
+
+      const tagsHTML = f.tags.map(t => `<span class="fn-tag">${t}</span>`).join('');
+
+      card.innerHTML = `
+        <div class="fn-card-head">
+          <div class="fn-card-left">
+            <div class="fn-name">${f.name}</div>
+            <div class="fn-short">${f.short}</div>
+          </div>
+          <div class="fn-toggle">+</div>
+        </div>
+        <div class="fn-body">
+          <div class="fn-desc">${f.desc}</div>
+          <div class="fn-detail-label">引数</div>
+          <div class="fn-params">${paramsHTML}</div>
+          <div class="fn-detail-label">戻り値</div>
+          <div class="fn-returns"><code>${f.returns}</code></div>
+          <div class="fn-detail-label">詳細</div>
+          <div class="fn-detail" style="border-left-color:${col}">${f.detail}</div>
+          <div class="fn-tags">${tagsHTML}</div>
+        </div>
+      `;
+
+      card.querySelector('.fn-card-head').addEventListener('click', () => {
+        card.classList.toggle('open');
+      });
+
+      grid.appendChild(card);
+    });
+  });
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  query = e.target.value;
+  renderCards();
+});
+
+renderCards();
+
+// Intersection observer for reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Active nav link
+window.addEventListener('scroll', () => {
+  const sections = ['architecture','flow','functions','state'];
+  const links = document.querySelectorAll('.nav-links a');
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= 80 && rect.bottom > 80) {
+      links.forEach(l => l.style.color = '');
+      if (links[i]) links[i].style.color = 'var(--accent)';
+    }
+  });
+});
+</script>
+</body>
+</html>

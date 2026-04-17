@@ -1,0 +1,11 @@
+EX36	START
+	IN	BUFF,LEN_B
+	OUT	MSG,LEN_M
+	OUT	BUFF,LEN_B
+	RET
+;
+LEN_B	DS	1
+LEN_M	DC	29
+BUFF	DS	5
+MSG	DC	'Input string is following. - '
+	END

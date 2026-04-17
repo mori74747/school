@@ -1,0 +1,16 @@
+PROG	START
+; レジスタ渡し
+	LD	GR1,DATA1	; GR1: 補数を取るデータ
+	CALL	HOSU_V
+	ST	GR2,ANS1	; GR2: GR1の補数
+; アドレス渡し
+	LAD	GR1,DATA2	; GR1: 補数を取るデータが格納されている番地
+	LAD	GR2,ANS2	; GR2: 補数を格納する番地
+	CALL	HOSU_A
+	RET
+DATA1	DC	#FFFF
+DATA2	DC	#AAAA
+ANS1	DS	1
+ANS2	DS	1
+	END
+	
