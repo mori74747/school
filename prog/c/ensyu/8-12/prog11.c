@@ -58,3 +58,6 @@ int gcm(int m, int n){
 	}
 	return (n);
 }
+
+/*
+*/
