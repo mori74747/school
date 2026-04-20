@@ -17,7 +17,11 @@ main(){
 	n = getint("Input n: ");
 
 	// 出力
-	printf("Ans = %d\n", sumConsInt(n));
+	if(n < 0){
+		printf("Ans = -1\n");
+	}else{
+		printf("Ans = %d\n", sumConsInt(n));
+	}
 
 	return(0);
 }
