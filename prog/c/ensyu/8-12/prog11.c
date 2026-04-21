@@ -2,10 +2,6 @@
 #include <hamakou.h>
 
 int gcm(int m, int n);
-/*-----gcm()-----
-[引　数] 任意の整数　m, n
-[戻り値] mとnの最大公約数
------------------*/
 
 main(){
 
@@ -48,6 +44,10 @@ main(){
 	return (0);
 }
 
+/*-----gcm()-----
+[引　数] 任意の整数　m, n
+[戻り値] mとnの最大公約数
+-----------------*/
 int gcm(int m, int n){
 
 	int r = m % n;
