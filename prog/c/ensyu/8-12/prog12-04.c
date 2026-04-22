@@ -4,12 +4,7 @@
 void chLine(char c, int n);
 void chRectangle(char c, int m, int n);
 void chTriangle(char c, int m);
-/*-----chTriangle-----
-[引　数]　文字c, 整数m
-[戻り値]　なし
-[機　能]　第1引数で指定した文字cを、第2引数で指定したm段の二等辺三角形を
-表示する。ただし、表示後に改行する。
-------------------*/
+
 int main(void)
 {
 	// 変数の宣言・入力
@@ -59,6 +54,12 @@ void chRectangle(char c, int m, int n){
 	}
 }
 
+/*-----chTriangle-----
+[引　数]　文字c, 整数m
+[戻り値]　なし
+[機　能]　第1引数で指定した文字cを、第2引数で指定したm段の二等辺三角形を
+表示する。ただし、表示後に改行する。
+------------------*/
 void chTriangle(char c, int m){
 	int i;
 	for(i = 1; i <= m; i++){
