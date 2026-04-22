@@ -38,6 +38,7 @@ void chLine(char c, int n){
 	for(i = 1; i <= n; i++){
 		printf("%c",c);
 	}
+	return;
 }
 
 /*-----chRectangle-----
@@ -52,6 +53,7 @@ void chRectangle(char c, int m, int n){
 		chLine(c, n);
 		printf("\n");
 	}
+	return;
 }
 
 /*-----chTriangle-----
@@ -67,5 +69,6 @@ void chTriangle(char c, int m){
 		chLine(c, i*2-1);
 		chLine(' ', m-i);
 		printf("\n");
-	}	
+	}
+	return;
 }

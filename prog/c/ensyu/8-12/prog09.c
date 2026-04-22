@@ -13,7 +13,7 @@ main(){
 
 	// 合成抵抗の演算・出力(有効桁数:3桁)
 	double R0 = sCombResistance(R1, pCombResistance(R2, R3));
-	printf("%.3g\n",R0);
+	printf("合成抵抗 = %g Ω\n",R0);
 
 	return(0);
 }
