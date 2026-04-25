@@ -3,8 +3,8 @@
 
 #define LINE_SIZE 51 // マップを格納する2次元配列のヌル文字を含む行サイズ
 
-int readMap(                     );
-int showMap(                            );
+int readMap(char map[][LINE_SIZE]);
+int showMap(int n, char map[][LINE_SIZE]);
 
 main()
 {
@@ -42,7 +42,7 @@ int readMap(char map[][LINE_SIZE]){
 
 	// n 行 n 列を表す n を入力
 	fgets(buff, sizeof(buff), stdin);
-	sscanf(              );
+	sscanf(buff, "%d", &n);
 
 	if (n >= LINE_SIZE) { // 配列の行サイズを超えるマップは読み込まない
 		return(-1);
@@ -50,8 +50,8 @@ int readMap(char map[][LINE_SIZE]){
 		for (i = 0; i < n; i++) {
       		// マップデータの１行分を入力（このとき改行も含まれるので注意）
 			fgets(buff, sizeof(buff), stdin);
-; // 行末の改行をヌル文字で上書き
-;         // 入力行をマップ配列に格納
+			; // 行末の改行をヌル文字で上書き
+			;         // 入力行をマップ配列に格納
 		}
 		return(n);   // マップのサイズを返す
 	}

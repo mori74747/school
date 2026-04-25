@@ -9,37 +9,37 @@ int transformMap(                                                               
 
 main()
 {
-  char map1[LINE_SIZE - 1][LINE_SIZE]; // 元のマップを格納する２次元配列
-  char map2[LINE_SIZE - 1][LINE_SIZE]; // 変換後のマップを格納する２次元配列
-  int n;                                     // 入力したマップのサイズ
+	char map1[LINE_SIZE - 1][LINE_SIZE]; // 元のマップを格納する２次元配列
+	char map2[LINE_SIZE - 1][LINE_SIZE]; // 変換後のマップを格納する２次元配列
+	int n;                                     // 入力したマップのサイズ
 
-  n = readMap(map1);
+	n = readMap(map1);
 
-  if (n < 0) {
-    printf("マップサイズが上限を超えています。\n");
-  } else {
-    printf("\n元の図形\n");
-    showMap(n, map1);
+	if(n < 0){
+		printf("マップサイズが上限を超えています。\n");
+	}else{
+		printf("\n元の図形\n");
+		showMap(n, map1);
 
-    printf("\n90゜右回転\n");
-    transformMap(1, n, map1, map2);
-    showMap(n, map2);
+		printf("\n90゜右回転\n");
+		transformMap(1, n, map1, map2);
+		showMap(n, map2);
 
-    printf("\n90゜左回転\n");
-    transformMap(2, n, map1, map2);
-    showMap(n, map2);
+		printf("\n90゜左回転\n");
+		transformMap(2, n, map1, map2);
+		showMap(n, map2);
 
-    printf("\n左右反転\n");
-    transformMap(3, n, map1, map2);
-    showMap(n, map2);
+		printf("\n左右反転\n");
+		transformMap(3, n, map1, map2);
+		showMap(n, map2);
 
-    printf("\n上下反転\n");
-    transformMap(4, n, map1, map2);
-    showMap(n, map2);
-    putchar('\n');  // 見やすくするための改行
-  }
+		printf("\n上下反転\n");
+		transformMap(4, n, map1, map2);
+		showMap(n, map2);
+		putchar('\n');  // 見やすくするための改行
+	}
 
-  return(0);
+	return(0);
 }
 
 //---------------------------------------------------------------------------------
