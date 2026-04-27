@@ -50,8 +50,8 @@ int readMap(char map[][LINE_SIZE]){
 		for (i = 0; i < n; i++) {
       		// マップデータの１行分を入力（このとき改行も含まれるので注意）
 			fgets(buff, sizeof(buff), stdin);
-			; // 行末の改行をヌル文字で上書き
-			;         // 入力行をマップ配列に格納
+			buff[strcspn(buff, "\n")] = '\0';  // 行末の改行をヌル文字で上書き
+			strcpy(map[i],buff);         // 入力行をマップ配列に格納
 		}
 		return(n);   // マップのサイズを返す
 	}
@@ -71,7 +71,7 @@ int showMap(int n, char map[][LINE_SIZE]){
 		return (0);
 	}else{
 		for (i = 0; i < n; i++){
-
+			printf("%s\n",map[i]);
 		}
 		return (1);
 	}

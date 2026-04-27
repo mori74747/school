@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <hamakou.h>
 
-#define MAX_SIZE 100
+#define MAX_SIZE 5
 
 int inputData(int n, double x[]);
 double sumData(int n, double x[]);
@@ -16,12 +16,12 @@ main()
 
 	n = getint("入力データの数：");
 	// ｎ個のデータを配列ｘへ入力
-	if ((num = inputData(n, x)) > n) {  // 入力できないデータがあった時は警告
+	if ((num = inputData(n, x)) < n) {  // 入力できないデータがあった時は警告
 		printf("\n入力データ数が配列の上限を超えました。\n");
 		printf("入力できたデータのみについて集計します。\n");
 	}
-	s = sumData(n, x);  // 配列ｘに格納されているデータの合計を求める
-	h = s / n;          // 平均を計算する
+	s = sumData(num, x);  // 配列ｘに格納されているデータの合計を求める
+	h = s / num;          // 平均を計算する
 	printf("\n");
 
 	printf("合計＝%g, 平均＝%g\n", s, h);
@@ -35,13 +35,15 @@ main()
 //    戻 り 値　　：実際に入力したデータ数（但し、最大値は配列要素数の上限）
 //--------------------------------------------------------------------------
     int inputData(int n, double x[]){
-		int i;
-		for(i = 0; i < n; i++){
+		int i, size = n;
+		if(MAX_SIZE < size){
+			size = MAX_SIZE;
+		}
+		for(i = 0; i < size; i++){
 			printf("x[%d] : ",i);
 			x[i] = getfloat("");
 		}
-		i++;
-		return (i);
+		return (size);
 	}
 
 //--------------------------------------------------------------------------
@@ -52,7 +54,8 @@ main()
 //--------------------------------------------------------------------------
 	double sumData(int n, double x[]){
 		double sum = 0;
-		for(int i = 0; i < n; i++){
+		int i;
+		for(i = 0; i < n; i++){
 			sum += x[i];
 		}
 		return (sum);
