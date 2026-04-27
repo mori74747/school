@@ -62,10 +62,10 @@ int readMap(char map[][LINE_SIZE]){
 	fgets(buff, sizeof(buff), stdin);
 	sscanf(buff, "%d", &n);
 
-	if (n >= LINE_SIZE) { // 配列の行サイズを超えるマップは読み込まない
+	if(n >= LINE_SIZE) { // 配列の行サイズを超えるマップは読み込まない
 		return(-1);
 	}else{
-		for (i = 0; i < n; i++) {
+		for(i = 0; i < n; i++) {
       		// マップデータの１行分を入力（このとき改行も含まれるので注意）
 			fgets(buff, sizeof(buff), stdin);
 			buff[strcspn(buff, "\n")] = '\0';  // 行末の改行をヌル文字で上書き
@@ -83,12 +83,12 @@ int readMap(char map[][LINE_SIZE]){
 // 引数で指定したサイズ n のマップを表示する
 //---------------------------------------------------------------------------------
 int showMap(int n, char map[][LINE_SIZE]){
+	
 	int i, j;
-
-	if (n >= LINE_SIZE) {
+	if(n >= LINE_SIZE) {
 		return (0);
 	}else{
-		for (i = 0; i < n; i++){
+		for(i = 0; i < n; i++){
 			printf("%s\n",map[i]);
 		}
 		return (1);
@@ -112,25 +112,24 @@ int showMap(int n, char map[][LINE_SIZE]){
 //---------------------------------------------------------------------------------
 int transformMap(int method, int n, char map1[][LINE_SIZE], char map2[][LINE_SIZE])
 {
-    int i, j;
-
-    if (n >= LINE_SIZE) {
-        return 0;
+	if(n >= LINE_SIZE) {
+        return (0);
     }
 
+    int i, j;
     for (i = 0; i < n; i++){
         for (j = 0; j < n; j++){
 
-            if (method == 1){ 				// 90度右回転
+            if(method == 1){ 				// 90度右回転
                 map2[j][n-1-i] = map1[i][j];
 
-            } else if (method == 2){ 		// 90度左回転
+            }else if(method == 2){ 		// 90度左回転
                 map2[n-1-j][i] = map1[i][j];
 
-            } else if (method == 3){ 		// 左右反転
+            }else if(method == 3){ 		// 左右反転
                 map2[i][n-1-j] = map1[i][j];
 
-            } else if (method == 4){ 		// 上下反転
+            }else if(method == 4){ 		// 上下反転
                 map2[n-1-i][j] = map1[i][j];
             }
         }
@@ -141,5 +140,5 @@ int transformMap(int method, int n, char map1[][LINE_SIZE], char map2[][LINE_SIZ
         map2[i][n] = '\0';
     }
 
-    return 1;
+    return (1);
 }

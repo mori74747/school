@@ -44,10 +44,10 @@ int readMap(char map[][LINE_SIZE]){
 	fgets(buff, sizeof(buff), stdin);
 	sscanf(buff, "%d", &n);
 
-	if (n >= LINE_SIZE) { // 配列の行サイズを超えるマップは読み込まない
+	if(n >= LINE_SIZE) { // 配列の行サイズを超えるマップは読み込まない
 		return(-1);
 	}else{
-		for (i = 0; i < n; i++) {
+		for(i = 0; i < n; i++) {
       		// マップデータの１行分を入力（このとき改行も含まれるので注意）
 			fgets(buff, sizeof(buff), stdin);
 			buff[strcspn(buff, "\n")] = '\0';  // 行末の改行をヌル文字で上書き
@@ -65,12 +65,12 @@ int readMap(char map[][LINE_SIZE]){
 // 引数で指定したサイズ n のマップを表示する
 //---------------------------------------------------------------------------------
 int showMap(int n, char map[][LINE_SIZE]){
+	
 	int i, j;
-
-	if (n >= LINE_SIZE) {
+	if(n >= LINE_SIZE) {
 		return (0);
 	}else{
-		for (i = 0; i < n; i++){
+		for(i = 0; i < n; i++){
 			printf("%s\n",map[i]);
 		}
 		return (1);
