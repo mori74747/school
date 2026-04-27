@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <hamakou.h>
 
-#define MAX_SIZE 5
+#define MAX_SIZE 10
 
 int inputData(int n, double x[]);
 double sumData(int n, double x[]);
