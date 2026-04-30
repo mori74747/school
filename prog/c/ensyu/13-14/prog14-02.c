@@ -120,7 +120,7 @@ int transformMap(int method, int n, char map1[][LINE_SIZE], char map2[][LINE_SIZ
     for (i = 0; i < n; i++){
         for (j = 0; j < n; j++){
 
-            if(method == 1){ 				// 90度右回転
+            if(method == 1){ 			// 90度右回転
                 map2[j][n-1-i] = map1[i][j];
 
             }else if(method == 2){ 		// 90度左回転
