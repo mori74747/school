@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <hamakou.h>
 
-#define MAX_SIZE 10
+#define MAX_SIZE 100
 
 int inputData(int n, double x[]);
 double sumData(int n, double x[]);
@@ -34,17 +34,17 @@ main()
 //    第２引数 x[]：倍精度実数データを格納する配列              
 //    戻 り 値　　：実際に入力したデータ数（但し、最大値は配列要素数の上限）
 //--------------------------------------------------------------------------
-    int inputData(int n, double x[]){
-		int i, size = n;
-		if(MAX_SIZE < size){
-			size = MAX_SIZE;
-		}
-		for(i = 0; i < size; i++){
-			printf("x[%d] : ",i);
-			x[i] = getfloat("");
-		}
-		return (size);
+int inputData(int n, double x[]){
+int i, size = n;
+	if(MAX_SIZE < size){
+		size = MAX_SIZE;
 	}
+	for(i = 0; i < size; i++){
+		printf("x[%d] : ",i);
+		x[i] = getfloat("");
+	}
+	return (size);
+}
 
 //--------------------------------------------------------------------------
 //   配列ｘに格納されているｎ個の実数データの合計を求める
@@ -52,11 +52,11 @@ main()
 //    第２引数 x[]：倍精度実数データが格納されている配列              
 //    戻 り 値　　：配列ｘに格納されている倍精度実数データの合計
 //--------------------------------------------------------------------------
-	double sumData(int n, double x[]){
-		double sum = 0;
-		int i;
-		for(i = 0; i < n; i++){
-			sum += x[i];
-		}
-		return (sum);
+double sumData(int n, double x[]){
+	double sum = 0;
+	int i;
+	for(i = 0; i < n; i++){
+		sum += x[i];
 	}
+	return (sum);
+}

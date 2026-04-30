@@ -132,13 +132,8 @@ int transformMap(int method, int n, char map1[][LINE_SIZE], char map2[][LINE_SIZ
             }else if(method == 4){ 		// 上下反転
                 map2[n-1-i][j] = map1[i][j];
             }
+			map2[i][n] = '\0';
         }
     }
-
-    // 各行の終端処理
-    for (i = 0; i < n; i++){
-        map2[i][n] = '\0';
-    }
-
     return (1);
 }
