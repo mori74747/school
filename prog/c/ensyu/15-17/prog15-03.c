@@ -24,26 +24,34 @@ main()
 
 	n = getint("入力データの数：");
 	// ｎ個のデータを配列ｘへ入力
-	if ((num = inputData(n, x)) < n) {  // 入力できないデータがあった時は警告
+	// 入力できないデータがあった時は警告
+	if ((num = inputData(n, x)) < n) {
 		printf("\n入力データ数が配列の上限を超えました。\n");
 		printf("入力できたデータのみについて集計します。\n");
 	}
 
+	// そのままの配列を表示
 	showData(n, x);
 	printf("\n");
 
+	// 降順で並び替えして表示
 	descData(n, x);
 	showData(n, x);
 
+	// 最大値、最小値を求める
 	max = maxData(n, x);
 	min = minData(n, x);
 
-	sum = sumData(num, x);  // 配列ｘに格納されているデータの合計を求める
-	avg = sum / num;          // 平均を計算する
+	// 配列ｘに格納されているデータの合計を求める
+	sum = sumData(num, x);
+	// 平均を計算する
+	avg = sum / num;
 
+	// 分散を求める
 	var = varData(n, x, avg);
 	printf("\n");
 
+	// 値の表示
 	printf("最大値: %g\n",max);
 	printf("最小値: %g\n",min);
 	printf("合計　: %g\n",sum);
@@ -79,16 +87,17 @@ int i, size = n;
 //--------------------------------------------------------------------------
 void descData(int n, double x[]){
 	int i, j;
-	double tmp;
-	for(i = 0; i < n-1; i++){
-		for(j = 0; j < n-i-1; j++){
-			if(x[j] < x[j+1]){
-				tmp    = x[j];
-				x[j]   = x[j+1];
-				x[j+1] = tmp; 
-			}
-		}
-	}
+	for(int i = 1; i < n; i++){
+        double key = x[i];
+        int j = i - 1;
+
+        while (j >= 0 && x[j] > key) {
+            x[j + 1] = x[j];
+            j--;
+        }
+
+        x[j + 1] = key;
+    }
 	return;
 }
 
@@ -142,7 +151,7 @@ double sumData(int n, double x[]){
 }
 
 //--------------------------------------------------------------------------
-//   配列ｘに格納されているｎ個の実数データの合計を求める
+//   配列ｘに格納されているｎ個の実数データの分散を求める
 //    第１引数 n  ：配列に格納されているデータの個数          
 //    第２引数 x[]：倍精度実数データが格納されている配列
 //    第３引数 avg：倍精度実数データの平均値            
