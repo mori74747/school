@@ -73,7 +73,6 @@ int i, size = n;
 		size = MAX_SIZE;
 	}
 	for(i = 0; i < size; i++){
-		printf("x[%d] : ",i);
 		x[i] = getfloat("");
 	}
 	return (size);
