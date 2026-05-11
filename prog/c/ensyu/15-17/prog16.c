@@ -33,13 +33,13 @@ main()
 	int       rank[MAX_SIZE];           // 順位を格納する配列
 
 	int n;                              // 入力したいデータの個数
-	n = getint("人数:");
+	scanf("%d", &n);
 
 	inputData(n, name, testData);
 
-	calcSum(n, testData, sum);
+	sumData(n, testData, sum);
 
-	calcAverage(n, sum, avg);
+	avgData(n, sum, avg);
 
 	calcRank(n, sum, rank);
 
@@ -69,16 +69,17 @@ void inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 	int i;
 	for(i = 0; i < n; i++){
 
-		int num = getint("出席番号:");
+		int num;
+		scanf("%d", &num);
 		num--;
 
 		char familyName[21];
 		char mainName[21];
 
-		printf("姓:");
+		printf("");
 		scanf("%20s", familyName);
 
-		printf("名:");
+		printf("");
 		scanf("%20s", mainName);
 
 		// 姓をコピー
@@ -91,7 +92,7 @@ void inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 		// テストデータの入力
 		int j;
 		for(j = 0; j < SUB_SIZE; j++){
-			scanf("%d",testData[num][j]);
+			scanf("%d", &testData[num][j]);
 		}
 	}
 
@@ -132,7 +133,7 @@ void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]){
 //--------------------------------------------------------------------------
 //   配列に格納されているデータの平均を求める
 //    第１引数 n           ：配列に格納されているデータの個数          
-//    第２引数 testData[][]：データが格納されている配列 
+//    第２引数 sum[][]     ：データが格納されている配列 
 //    第３引数 avg[]       ：合計データを格納する配列             
 //    戻 り 値             ：なし
 //--------------------------------------------------------------------------
@@ -142,13 +143,13 @@ void avgData(int n, int sum[][MAX_SIZE], double avg[][MAX_SIZE]){
 	// 生徒平均
 	for(i = 0; i < n; i++){
 
-		avg[STU][i] = (double)(sum[STU][i] / SUB_SIZE);
+		avg[STU][i] = (double)sum[STU][i] / SUB_SIZE;
 	}
 
 	// 教科平均
 	for(i = 0; i < SUB_SIZE; i++){
 
-		avg[SUB][i] = (double)(sum[SUB][i] / n);
+		avg[SUB][i] = (double)sum[SUB][i] / n;
 	}
 }
 
@@ -186,44 +187,48 @@ void showData(  int n,
 	printf("\n");
 	printf("試験成績一覧表\n\n");
 
-	printf("NO  氏名                     ");
-	printf("国語  英語  数学  合計  順位  平均\n");
+	printf("%-3s %-32s %7s %9s %9s %9s %9s %10s\n",
+		"NO  ",
+		"氏名",
+		"国語",
+		"数学",
+		"英語",
+		"合計",
+		"順位",
+		"平均\n");
 
 	for(i = 0; i < n; i++){
 
-		printf("%2d  ", i + 1);
-		printf("%-25s", name[i]);
+		printf("%3d  ", i + 1);
+		printf("%-28s", name[i]);
 
 		int j;
 		for(j = 0; j < SUB_SIZE; j++){
-			printf("%6d", testData[i][j]);
+			printf("%8d", testData[i][j]);
 		}
 
-		printf("%6d", sum[STU][i]);
-		printf("%6d", rank[i]);
-		printf("%7.2f", avg[STU][i]);
+		printf("%8d", sum[STU][i]);
+		printf("%8d", rank[i]);
+		printf("%8.2f", avg[STU][i]);
 
 		printf("\n");
 	}
 
 	printf("\n");
-    printf("合計");
-	int i;
+    printf("%35s","合計  ");
 	int all_sum = 0;
 	for(i = 0; i < SUB_SIZE; i++){
-		printf("%6d", sum[SUB][i]);
+		printf("%8d", sum[SUB][i]);
 		all_sum += sum[SUB][i];
 	}
-	printf("%6d\n", all_sum);
+	printf("%8d\n", all_sum);
 
-	printf("平均");
-	int i;
-	double all_avg = 0;
+	printf("%35s","平均  ");
 	for(i = 0; i < SUB_SIZE; i++){
-		printf("%6.2g", avg[SUB][i]);
-		all_avg += avg[SUB][i];
+		printf("%8.2f", avg[SUB][i]);
 	}
-	printf("%6.2g\n", all_avg);
+	double all_avg = (double)all_sum / n;
+	printf("%8.2f\n", all_avg);
 }
 
 void showFreq(int n, int sum[][MAX_SIZE]){
@@ -257,8 +262,7 @@ void showFreq(int n, int sum[][MAX_SIZE]){
 		}
 	}
 
-	printf("\n");
-	printf("度数分布\n\n");
+	printf("\n\n");
 
 	for(i = 0; i < 7; i++){
 
@@ -266,12 +270,12 @@ void showFreq(int n, int sum[][MAX_SIZE]){
 		int max = min + 49;
 
 		if(i == 6){
-			printf("300 -     ");
+			printf("%-10s","300");
 		}
 		else{
 			printf("%3d - %3d ", min, max);
 		}
-		printf("[%d] ", freq[i]);
+		printf("[%2d] ", freq[i]);
 
 		for(j = 0; j < freq[i]; j++){
 			printf("*");
