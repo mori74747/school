@@ -5,16 +5,18 @@
 #define MAX_SIZE   100
 #define MAX_NAME   42
 #define MAX_POINT  100
+#define FREQ_SIZE  7
 // テストデータの格納用
 #define SUB_SIZE   3
 // 各生徒、各教科のデータ管理用
 #define STU 0
 #define SUB 1
 
-void inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]);
+int  inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]);
 void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]);
 void avgData(int n, int sum[][MAX_SIZE], double avg[][MAX_SIZE]);
 void calcRank(int n, int sum[][MAX_SIZE], int rank[]);
+void makeFreq(int n, int sum[][MAX_SIZE], int freq[]);
 void showData(  int n,
 				char   name[][MAX_NAME],
 				int    testData[][SUB_SIZE],
@@ -22,22 +24,28 @@ void showData(  int n,
 				double avg[][MAX_SIZE],
 				int    rank[]
 			);
-void showFreq(int n, int sum[][MAX_SIZE]);
+void showFreq(int n, int freq[FREQ_SIZE]);
 
 main()
 {
 	char      name[MAX_SIZE][MAX_NAME]; // 名前を格納する配列
 	int   testData[MAX_SIZE][SUB_SIZE]; // 試験データを記録する配列
-	int        sum[2][MAX_SIZE];        // 合計点数を格納する配列
+	int        sum[2][MAX_SIZE] = {};   // 合計点数を格納する配列
 	double     avg[2][MAX_SIZE];        // 平均点数を格納する配列
 	int       rank[MAX_SIZE];           // 順位を格納する配列
+	int       freq[FREQ_SIZE] = {};     // 度数分布を格納する配列
+	int        num;                     // 実際に入力できたデータの個数
+	int          n;                     // 入力したいデータの個数
 
-	int n;                              // 入力したいデータの個数
-	printf("人数:");
-	scanf("%d", &n);
+	n = getint("入力データの数：");
+	// ｎ個のデータをそれぞれの配列へ入力
+	// 入力できないデータがあった時は警告
+	if ((num = inputData(n, name, testData)) < n) {
+		printf("\n入力データ数が配列の上限を超えました。\n");
+		printf("入力できたデータのみについて集計します。\n");
+	}
 
 	// データの入力
-	inputData(n, name, testData);
 
 	// データの合計を計算(各生徒・各教科)
 	sumData(n, testData, sum);
@@ -48,6 +56,8 @@ main()
 	// データの順位を計算
 	calcRank(n, sum, rank);
 
+	// 度数分布表の作成
+	makeFreq(n, sum, freq);
 	// データの表示
 	showData( n,
 				name,
@@ -57,21 +67,28 @@ main()
 				rank );
 
 	// 度数分布表の表示
-	showFreq(n, sum);
+	showFreq(n, freq);
 
 	return(0);
 }
 
 //--------------------------------------------------------------------------
 //  入力データをそれぞれの配列に入力する。
+//  name[] に 与えられた姓と名を空白区切りで入力
+//  testData[][] に 各生徒ごとの各教科の点数を入力
+//
 //    第１引数 n           ：入力したいデータの個数
 //    第２引数 name[]      ：名前を格納する配列
 //    第３引数 testData[][]：試験データを格納する配列
 //    戻 り 値             ：なし
 //--------------------------------------------------------------------------
-void inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
+int inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 
-	int i;
+	int i, size = n;
+	// 入力個数の規制
+	if(size > MAX_SIZE){
+		size = MAX_SIZE;
+	}
 	for(i = 0; i < n; i++){
 
 		int num;
@@ -99,42 +116,34 @@ void inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 		}
 	}
 
-	return;
+	return(size);
 }
 
 //--------------------------------------------------------------------------
 //   配列に格納されているデータの合計を求める
+//   生徒ごとの合計と教科ごとの合計をsumの[STU]と[SUB]に分けて入力
 //    第１引数 n           ：配列に格納されているデータの個数          
 //    第２引数 testData[][]：データが格納されている配列 
-//    第３引数 sum[]       ：合計データを格納する配列             
+//    第３引数 sum[][]     ：合計データを格納する配列             
 //    戻 り 値             ：なし
 //--------------------------------------------------------------------------
 void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]){
 	int i, j;
 
-	// 生徒ごと合計
+	// 合計の計算
 	for(i = 0; i < n; i++){
-
-		sum[STU][i] = 0;
-
 		for(j = 0; j < SUB_SIZE; j++){
+
 			sum[STU][i] += testData[i][j];
+			sum[SUB][j] += testData[j][i];
 		}
 	}
-
-	// 教科ごと合計
-	for(j = 0; j < SUB_SIZE; j++){
-
-		sum[SUB][j] = 0;
-
-		for(i = 0; i < n; i++){
-			sum[SUB][j] += testData[i][j];
-		}
-	}
+	return;
 }
 
 //--------------------------------------------------------------------------
 //   配列に格納されているデータの平均を求める
+//   生徒ごとの平均と教科ごとの平均をavgの[STU]と[SUB]に分けて入力
 //    第１引数 n           ：配列に格納されているデータの個数          
 //    第２引数 sum[][]     ：合計データが格納されている配列 
 //    第３引数 avg[][]     ：平均データを格納する配列             
@@ -154,10 +163,13 @@ void avgData(int n, int sum[][MAX_SIZE], double avg[][MAX_SIZE]){
 
 		avg[SUB][i] = (double)sum[SUB][i] / n;
 	}
+	return;
 }
 
 //--------------------------------------------------------------------------
-//   配列に格納されているデータの平均を求める
+//   配列に格納されているデータの順位を求める
+//   生徒の合計データから生徒の順位をrank[]に入力
+//
 //    第１引数 n           ：配列に格納されているデータの個数          
 //    第２引数 sum[][]     ：合計データが格納されている配列 
 //    第３引数 rank[]      ：順位データを格納する配列             
@@ -178,6 +190,7 @@ void calcRank(int n, int sum[][MAX_SIZE], int rank[]){
 			}
 		}
 	}
+	return;
 }
 
 //--------------------------------------------------------------------------
@@ -188,7 +201,7 @@ void calcRank(int n, int sum[][MAX_SIZE], int rank[]){
 //    第４引数 sum[][]     ：合計データが格納されている配列
 //    第５引数 avg[][]     ：平均データが格納されている配列
 //    第６引数 rank[]      ：順位データが格納されている配列
-//    戻 り 値　　：なし
+//    戻 り 値　　         ：なし
 //--------------------------------------------------------------------------
 void showData(  int n,
 				char   name[][MAX_NAME],
@@ -244,17 +257,20 @@ void showData(  int n,
 	}
 	double all_avg = (double)all_sum / n;
 	printf("%8.2f\n", all_avg);
+
+	return;
 }
 
 //--------------------------------------------------------------------------
-//   配列に格納されているデータの度数分布表を表示する
+//   配列に格納されているデータの度数分布表を作成する
+//   各生徒の合計データから度数分布表を作成
+//
 //    第１引数 n           ：配列に格納されているデータの個数          
 //    第２引数 sum[][]     ：合計データが格納されている配列
 //    戻 り 値             ：なし
 //--------------------------------------------------------------------------
 
-void showFreq(int n, int sum[][MAX_SIZE]){
-	int freq[7] = {0};
+void makeFreq(int n, int sum[][MAX_SIZE], int freq[]){
 
 	int i, j;
 	for(i = 0; i < n; i++){
@@ -283,9 +299,20 @@ void showFreq(int n, int sum[][MAX_SIZE]){
 			freq[6]++;
 		}
 	}
+}
 
+//--------------------------------------------------------------------------
+//   配列に格納されているデータの度数分布表からヒストグラムを表示
+//
+//    第１引数 n           ：配列に格納されているデータの個数          
+//    第２引数 freq[]      ：合計データが格納されている配列
+//    戻 り 値             ：なし
+//--------------------------------------------------------------------------
+
+void showFreq(int n, int freq[]){
+	
 	printf("\n\n");
-
+	int i, j;
 	for(i = 0; i < 7; i++){
 
 		int min = i * 50;
@@ -305,4 +332,5 @@ void showFreq(int n, int sum[][MAX_SIZE]){
 
 		printf("\n");
 	}
+	return;
 }

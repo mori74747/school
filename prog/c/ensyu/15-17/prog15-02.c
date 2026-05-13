@@ -7,8 +7,6 @@ int inputData(int n, double x[]);
 void descData(int n, double x[]);
 double sumData(int n, double x[]);
 double varData(int n, double x[], double avg);
-double maxData(int n, double x[]);
-double minData(int n, double x[]);
 void showData(int n, double x[]);
 
 main()
@@ -31,16 +29,16 @@ main()
 	}
 
 	// そのままの配列を表示
-	showData(n, x);
+	showData(num, x);
 	printf("\n");
 
 	// 降順で並び替えして表示
-	descData(n, x);
-	showData(n, x);
+	descData(num, x);
+	showData(num, x);
 
 	// 最大値、最小値を求める
-	max = maxData(n, x);
-	min = minData(n, x);
+	max = x[0];
+	min = x[num-1];
 
 	// 配列ｘに格納されているデータの合計を求める
 	sum = sumData(num, x);
@@ -48,7 +46,7 @@ main()
 	avg = sum / num;
 
 	// 分散を求める
-	var = varData(n, x, avg);
+	var = varData(num, x, avg);
 	printf("\n");
 
 	// 値の表示
@@ -68,11 +66,13 @@ main()
 //    戻 り 値　　：実際に入力したデータ数（但し、最大値は配列要素数の上限）
 //--------------------------------------------------------------------------
 int inputData(int n, double x[]){
-int i, size = n;
+	int i, size = n;
+	// 入力個数の規制
 	if(MAX_SIZE < size){
 		size = MAX_SIZE;
 	}
 	for(i = 0; i < size; i++){
+		printf("x[%d]: ",i);
 		x[i] = getfloat("");
 	}
 	return (size);
@@ -87,8 +87,10 @@ int i, size = n;
 void descData(int n, double x[]){
 	int i, j;
 	double tmp;
+	// バブルソート
 	for(i = 0; i < n-1; i++){
 		for(j = 0; j < n-i-1; j++){
+			// 右隣を見て大きければ入れ替える
 			if(x[j] < x[j+1]){
 				tmp    = x[j];
 				x[j]   = x[j+1];
@@ -100,40 +102,6 @@ void descData(int n, double x[]){
 }
 
 //--------------------------------------------------------------------------
-//   配列ｘに格納されているｎ個の実数データの最大値を求める
-//    第１引数 n  ：配列に格納されているデータの個数          
-//    第２引数 x[]：倍精度実数データが格納されている配列              
-//    戻 り 値　　：配列ｘに格納されている倍精度実数データの最大値
-//--------------------------------------------------------------------------
-double maxData(int n, double x[]){
-	double max = x[0];
-	int i;
-	for(i = 1; i < n; i++){
-		if(max < x[i]){
-			max = x[i];
-		}
-	}
-	return (max);
-}
-
-//--------------------------------------------------------------------------
-//   配列ｘに格納されているｎ個の実数データの最小値を求める
-//    第１引数 n  ：配列に格納されているデータの個数          
-//    第２引数 x[]：倍精度実数データが格納されている配列              
-//    戻 り 値　　：配列ｘに格納されている倍精度実数データの最小値
-//--------------------------------------------------------------------------
-double minData(int n, double x[]){
-	double min = x[0];
-	int i;
-	for(i = 1; i < n; i++){
-		if(min > x[i]){
-			min = x[i];
-		}
-	}
-	return (min);
-}
-
-//--------------------------------------------------------------------------
 //   配列ｘに格納されているｎ個の実数データの合計を求める
 //    第１引数 n  ：配列に格納されているデータの個数          
 //    第２引数 x[]：倍精度実数データが格納されている配列              
@@ -142,6 +110,7 @@ double minData(int n, double x[]){
 double sumData(int n, double x[]){
 	double sum = 0;
 	int i;
+	// 合計の計算
 	for(i = 0; i < n; i++){
 		sum += x[i];
 	}
