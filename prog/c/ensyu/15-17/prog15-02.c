@@ -27,6 +27,7 @@ main()
 		printf("\n入力データ数が配列の上限を超えました。\n");
 		printf("入力できたデータのみについて集計します。\n");
 	}
+	printf("\n");
 
 	// そのままの配列を表示
 	showData(num, x);
@@ -35,6 +36,7 @@ main()
 	// 降順で並び替えして表示
 	descData(num, x);
 	showData(num, x);
+	printf("\n");
 
 	// 最大値、最小値を求める
 	max = x[0];
@@ -73,9 +75,10 @@ int inputData(int n, double x[]){
 	}
 	for(i = 0; i < size; i++){
 		// 入力
-		printf("x[%d]: ",i);
+		printf("x[%3d]: ",i);
 		x[i] = getfloat("");
 	}
+	printf("\n");
 	return (size);
 }
 

@@ -14,12 +14,12 @@
 #define SUB 1
 #define ALL 2
 
-int  inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]);
-void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]);
-void avgData(int n, int sum[][MAX_SIZE], double avg[][MAX_SIZE]);
-void calcRank(int n, int sum[][MAX_SIZE], int rank[]);
-void makeFreq(int n, int sum[][MAX_SIZE], int freq[]);
-void showData(  int n,
+int   inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]);
+void    sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]);
+void    avgData(int n, int sum[][MAX_SIZE], double avg[][MAX_SIZE]);
+void   calcRank(int n, int sum[][MAX_SIZE], int rank[]);
+void   makeFreq(int n, int sum[][MAX_SIZE], int freq[]);
+void   showData(int n,
 				char   name[][MAX_NAME],
 				int    testData[][SUB_SIZE],
 				int    sum[][MAX_SIZE],
@@ -32,14 +32,14 @@ main()
 {
 	char      name[MAX_SIZE][MAX_NAME]; // 名前を格納する配列
 	int   testData[MAX_SIZE][SUB_SIZE]; // 試験データを記録する配列
-	int        sum[2][MAX_SIZE] = {};   // 合計点数を格納する配列
-	double     avg[2][MAX_SIZE];        // 平均点数を格納する配列
+	int        sum[3][MAX_SIZE] = {};   // 合計点数を格納する配列
+	double     avg[3][MAX_SIZE];        // 平均点数を格納する配列
 	int       rank[MAX_SIZE];           // 順位を格納する配列
 	int       freq[FREQ_SIZE] = {};     // 度数分布を格納する配列
 	int        num;                     // 実際に入力できたデータの個数
 	int          n;                     // 入力したいデータの個数
 
-	n = getint("入力データの数：");
+	n = getint("人数：");
 	// ｎ個のデータをそれぞれの配列へ入力
 	// 入力できないデータがあった時は警告
 	if ((num = inputData(n, name, testData)) < n) {
@@ -131,7 +131,8 @@ int inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 
 //--------------------------------------------------------------------------
 //   配列に格納されているデータの合計を求める
-//   生徒ごとの合計と教科ごとの合計をsumの[STU]と[SUB]に分けて入力
+//   生徒ごとの合計と教科ごとの合計をsumの[STU]と[SUB]に分けて求めて格納
+//   全体の合計を[ALL]に格納
 //    第１引数 n           ：配列に格納されているデータの個数          
 //    第２引数 testData[][]：データが格納されている配列 
 //    第３引数 sum[][]     ：合計データを格納する配列             
@@ -154,7 +155,8 @@ void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]){
 
 //--------------------------------------------------------------------------
 //   配列に格納されているデータの平均を求める
-//   生徒ごとの平均と教科ごとの平均をavgの[STU]と[SUB]に分けて入力
+//   生徒ごとの平均と教科ごとの平均をavgの[STU]と[SUB]に分けて格納
+//   全体の平均を[ALL]に格納
 //    第１引数 n           ：配列に格納されているデータの個数          
 //    第２引数 sum[][]     ：合計データが格納されている配列 
 //    第３引数 avg[][]     ：平均データを格納する配列             
@@ -174,6 +176,10 @@ void avgData(int n, int sum[][MAX_SIZE], double avg[][MAX_SIZE]){
 
 		avg[SUB][i] = (double)sum[SUB][i] / n;
 	}
+
+	// 合計平均
+	avg[ALL][0] = (double)sum[ALL][0] / n;
+
 	return;
 }
 
@@ -254,16 +260,19 @@ void showData(  int n,
 	}
 
 	printf("\n");
+
     printf("%35s","合計  ");
-	
+	for(i = 0; i < SUB_SIZE; i++){
+		printf("%8d", sum[SUB][i]);
+	}
 	printf("%8d\n", sum[ALL][0]);
 
 	printf("%35s","平均  ");
 	for(i = 0; i < SUB_SIZE; i++){
 		printf("%8.2f", avg[SUB][i]);
 	}
-	double all_avg = (double)sum[ALL][0] / n;
-	printf("%8.2f\n", all_avg);
+	
+	printf("%8.2f\n", avg[ALL][0]);
 
 	return;
 }
