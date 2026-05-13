@@ -6,12 +6,13 @@
 #define MAX_NAME   42
 #define MAX_POINT  100
 #define FREQ_SIZE  7
-#define BUFF_SIZE  100
+#define BUFF_SIZE  256
 // テストデータの格納用
 #define SUB_SIZE   3
 // 各生徒、各教科のデータ管理用
 #define STU 0
 #define SUB 1
+#define ALL 2
 
 int  inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]);
 void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]);
@@ -49,18 +50,18 @@ main()
 	// データの入力
 
 	// データの合計を計算(各生徒・各教科)
-	sumData(n, testData, sum);
+	sumData(num, testData, sum);
 
 	// データの平均を計算(各生徒・各教科)
-	avgData(n, sum, avg);
+	avgData(num, sum, avg);
 
 	// データの順位を計算
-	calcRank(n, sum, rank);
+	calcRank(num, sum, rank);
 
 	// 度数分布表の作成
-	makeFreq(n, sum, freq);
+	makeFreq(num, sum, freq);
 	// データの表示
-	showData( n,
+	showData(   num,
 				name,
 				testData,
 				sum,
@@ -68,7 +69,7 @@ main()
 				rank );
 
 	// 度数分布表の表示
-	showFreq(n, freq);
+	showFreq(num, freq);
 
 	return(0);
 }
@@ -86,35 +87,42 @@ main()
 int inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 
 	int i, size = n;
-	char buff[BUFF_SIZE];
 	// 入力個数の規制
 	if(size > MAX_SIZE){
 		size = MAX_SIZE;
 	}
+
+	printf("NO , 姓 , 名 , テストの点数 を 空白区切りで入力\n");
 	for(i = 0; i < n; i++){
 
+		int pos = 0, ct;
+		char buff[BUFF_SIZE] = {};
 		fgets(buff, sizeof(buff), stdin);
 
-		int num;
-		sscanf(buff, "%d", &num);
-		num--;
+		int No;
+		sscanf(buff, "%d%n", &No, &ct);
+		pos += ct;
+		No--;
 
 		char familyName[21];
 		char mainName[21];
 
-		sscanf(buff+1, "%s %s", familyName, mainName);
+		sscanf(buff + pos, "%s %s%n", familyName, mainName, &ct);
+		pos += ct;
 
 		// 姓をコピー
-		strcpy(name[num], familyName);
+		strcpy(name[No], familyName);
 		// 空白追加
-		strcat(name[num], " ");
+		
+		strcat(name[No], " ");
 		// 名追加
-		strcat(name[num], mainName);
+		strcat(name[No], mainName);
 
 		// テストデータの入力
 		int j;
 		for(j = 0; j < SUB_SIZE; j++){
-			sscanf(buff+3+j, "%d", testData[i][j]);
+			sscanf(buff + pos, "%d%n", &testData[No][j], &ct);
+			pos += ct;
 		}
 	}
 
@@ -137,7 +145,8 @@ void sumData(int n, int testData[][SUB_SIZE], int sum[][MAX_SIZE]){
 		for(j = 0; j < SUB_SIZE; j++){
 
 			sum[STU][i] += testData[i][j];
-			sum[SUB][j] += testData[j][i];
+			sum[SUB][j] += testData[i][j];
+			sum[ALL][0] += testData[i][j];
 		}
 	}
 	return;
@@ -246,18 +255,14 @@ void showData(  int n,
 
 	printf("\n");
     printf("%35s","合計  ");
-	int all_sum = 0;
-	for(i = 0; i < SUB_SIZE; i++){
-		printf("%8d", sum[SUB][i]);
-		all_sum += sum[SUB][i];
-	}
-	printf("%8d\n", all_sum);
+	
+	printf("%8d\n", sum[ALL][0]);
 
 	printf("%35s","平均  ");
 	for(i = 0; i < SUB_SIZE; i++){
 		printf("%8.2f", avg[SUB][i]);
 	}
-	double all_avg = (double)all_sum / n;
+	double all_avg = (double)sum[ALL][0] / n;
 	printf("%8.2f\n", all_avg);
 
 	return;
@@ -279,27 +284,7 @@ void makeFreq(int n, int sum[][MAX_SIZE], int freq[]){
 
 		int s = sum[STU][i];
 
-		if(s < 50){
-			freq[0]++;
-		}
-		else if(s < 100){
-			freq[1]++;
-		}
-		else if(s < 150){
-			freq[2]++;
-		}
-		else if(s < 200){
-			freq[3]++;
-		}
-		else if(s < 250){
-			freq[4]++;
-		}
-		else if(s < 300){
-			freq[5]++;
-		}
-		else{
-			freq[6]++;
-		}
+		freq[s/50]++;
 	}
 }
 

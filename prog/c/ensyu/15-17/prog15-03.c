@@ -129,6 +129,7 @@ double varData(int n, double x[], double avg){
 	double var = 0, dev;
 	int i;
 	for(i = 0; i < n; i++){
+		// 変位を計算、2乗して合計を計算
 		dev =  (x[i] - avg);
 		var += dev * dev;
 	}
@@ -145,6 +146,7 @@ double varData(int n, double x[], double avg){
 void showData(int n, double x[]){
 	int i;
 	for(i = 0; i < n; i++){
+		// 表示
 		printf("x[%3d]: %g\n",i,x[i]);
 	}
 	return;
