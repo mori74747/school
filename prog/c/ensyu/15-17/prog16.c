@@ -6,6 +6,7 @@
 #define MAX_NAME   42
 #define MAX_POINT  100
 #define FREQ_SIZE  7
+#define BUFF_SIZE  100
 // テストデータの格納用
 #define SUB_SIZE   3
 // 各生徒、各教科のデータ管理用
@@ -85,22 +86,23 @@ main()
 int inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 
 	int i, size = n;
+	char buff[BUFF_SIZE];
 	// 入力個数の規制
 	if(size > MAX_SIZE){
 		size = MAX_SIZE;
 	}
 	for(i = 0; i < n; i++){
 
+		fgets(buff, sizeof(buff), stdin);
+
 		int num;
-		scanf("%d", &num);
+		sscanf(buff, "%d", &num);
 		num--;
 
 		char familyName[21];
 		char mainName[21];
 
-		scanf("%20s", familyName);
-
-		scanf("%20s", mainName);
+		sscanf(buff+1, "%s %s", familyName, mainName);
 
 		// 姓をコピー
 		strcpy(name[num], familyName);
@@ -112,7 +114,7 @@ int inputData(int n, char name[][MAX_NAME], int testData[][SUB_SIZE]){
 		// テストデータの入力
 		int j;
 		for(j = 0; j < SUB_SIZE; j++){
-			scanf("%d", &testData[num][j]);
+			sscanf(buff+3+j, "%d", testData[i][j]);
 		}
 	}
 
