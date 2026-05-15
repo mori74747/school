@@ -1,5 +1,5 @@
 #include <stdio.h>
-      
+
 main()
 {
 	int i;           // クラスの番号 
