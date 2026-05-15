@@ -14,22 +14,22 @@ main()
 {
   Fraction a, b, c;
 
-  a =              ;   // 分数aをキーボードより入力する
+  a = getFraction();   // 分数aをキーボードより入力する
 
   printf("a = ");
-             ;         // 入力した分数aを表示
+  frcPrint(a);         // 入力した分数aを表示
   putchar('\n');
 
-  b =                ; // 分数bは2/3
+  b = frcCreate(2, 3); // 分数bは2/3
 
   printf("b = ");
-             ;         // 分数bを表示
+  frcPrint(b);         // 分数bを表示
   putchar('\n');
 
-  c =             ;    // c = a * b
+  c = frcMul(a, b);    // c = a * b
 
   printf("a * b = ");
-             ;         // 乗算結果である分数cの表示
+  frcPrint(c);         // 乗算結果である分数cの表示
   putchar('\n');
 
   return(0);
