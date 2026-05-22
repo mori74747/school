@@ -14,6 +14,10 @@ main()
 	// 分の計算
 	totalMin = (hourLast * 60 + minLast) - (hourFirst * 60 + minFirst);
 
+	// 日付をまたぐ場合
+	if (totalMin < 0) {
+		totalMin += 24 * 60;
+	}
 	// 秒に変換
 	totalSec = totalMin * 60;
 

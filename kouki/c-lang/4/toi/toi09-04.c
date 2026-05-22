@@ -8,32 +8,30 @@ main()
 						  {30,39,31,40,38,40,33,36}   // ３年生のデータ
 	};
 	// 1年1組のデータで初期化
-	int max[3] = {1, 1, zaiseki[0][0]};  // 在籍人数が一番多いクラスデータ
-	int min[3] = {1, 1, zaiseki[0][0]};  // 在籍人数が最も少ないクラスデータ
+	int max[2] = {1, 1};  // 在籍人数が一番多いクラスデータ
+	int min[2] = {1, 1};  // 在籍人数が最も少ないクラスデータ
 
 	// それぞれのクラスにおいて最小値・最大値を見つけたら更新
 	for (i = 0; i < 3; i++) {
 		for(j = 0; j < 8; j++){
 			// 現在の最大値より大きければ
-			if(max[2] < zaiseki[i][j]){
+			if(zaiseki[max[0]-1][max[1]-1] < zaiseki[i][j]){
 				max[0] = i+1;
 				max[1] = j+1;
-				max[2] = zaiseki[i][j];
 			}
 			// 現在の最小値より小さければ
-			else if(min[2] > zaiseki[i][j]){
+			else if(zaiseki[min[0]-1][min[1]-1] > zaiseki[i][j]){
 				min[0] = i+1;
 				min[1] = j+1;
-				min[2] = zaiseki[i][j];
 			}
 		}
 	}
 
 	// 在籍人数が最も多いクラスの表示
-	printf("在籍人数が最も多いのは%d年%d組の%d人です。\n",max[0], max[1], max[2]);
+	printf("在籍人数が最も多いのは%d年%d組の%d人です。\n",max[0], max[1], zaiseki[max[0]-1][max[1]-1]);
 
 	// 在籍人数が最も少ないクラスの表示
-	printf("在籍人数が最も少ないのは%d年%d組の%d人です。\n",min[0], min[1], min[2]);
+	printf("在籍人数が最も少ないのは%d年%d組の%d人です。\n",min[0], min[1], zaiseki[min[0]-1][min[1]-1]);
 	
 	return(0);
 }
