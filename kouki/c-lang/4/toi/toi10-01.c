@@ -11,6 +11,12 @@ main()
 	printf("時刻 = ");
 	scanf("%d:%d %d:%d", &hourFirst, &minFirst, &hourLast, &minLast);
 
+	// 分の計算
+	totalMin = (hourLast * 60 + minLast) - (hourFirst * 60 + minFirst);
+
+	// 秒に変換
+	totalSec = totalMin * 60;
+
 	printf("%d:%dから%d:%dまでは、", hourFirst, minFirst, hourLast, minLast);
 	printf("%d分または%d秒経過しています。\n", totalMin, totalSec);
 
