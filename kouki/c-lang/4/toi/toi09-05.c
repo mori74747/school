@@ -5,7 +5,7 @@ main()
 {
 	int  n;                   // 入力文字列の数
 	int  i;                   // ループ用
-	int  a, b;                // a: 先頭から見ていく b: 末尾から見ていく
+	int  left, right;         // left: 左から見ていく right: 右から見ていく
 	char strData[100][256];   // 文字列格納用
 	int  str_len[100];        // 文字列の長さ格納用
 
@@ -20,17 +20,17 @@ main()
 
 	// 文字列を逆順にする
 	for(i = 0; i < n; i++){
-		a = 0;
-		b  = str_len[i] - 1;
+		left = 0;
+		right = str_len[i] - 1;
 
 		char tmp; // 文字データの一時保存用
-		while(a < b){
-			tmp           = strData[i][a];
-			strData[i][a] = strData[i][b];
-			strData[i][b] = tmp;
+		while(left < right){
+			tmp               = strData[i][left];
+			strData[i][left]  = strData[i][right];
+			strData[i][right] = tmp;
 
-			a++;
-			b--;
+			left++;
+			right--;
 		}
 	}
 
