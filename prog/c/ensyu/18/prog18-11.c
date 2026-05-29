@@ -52,20 +52,20 @@ void frcPrintOperation(char op, Fraction x, Fraction y)
 {
   Fraction a;
 
-  switch (  ) {
+  switch (op) {
   case '+':
-    a =             ; break;
+    a = frcAdd(x, y); break;
   case '-':
-    a =             ; break;
+    a = frcSub(x, y); break;
   case '*':
-    a =             ; break;
+    a = frcMul(x, y); break;
   case '/':
-    a =             ; break;
+    a = frcDiv(x, y); break;
   default:
     printf("%c: 演算子が不正です。\n", op);
     return;
   }
-  a =                ;
+  a = frcReduction(a);
   frcPrint(x); printf(" %c ", op); frcPrint(y); printf(" = "); frcPrint(a);
   putchar('\n');
 
@@ -77,6 +77,7 @@ void frcPrintOperation(char op, Fraction x, Fraction y)
 // [戻り値] 分子の値
 int frcGetNumerator(Fraction x)
 {
+  return(x.numerator);
 }
 
 // Fraction型で表される分数の分母の値を返す
@@ -84,20 +85,21 @@ int frcGetNumerator(Fraction x)
 // [戻り値] 分母の値
 int frcGetDenominator(Fraction x)
 {
+  return(x.denominator);
 }
 
 // キーボードより、a/bの形で分数を入力する
-//   [引　数] なし
-//   [戻り値] Fraction型で表現される分数
+// [引  数] なし
+// [戻り値] Fraction型で表現される分数
 Fraction getFraction(void)
 {
   char buff[256];
-  int n, d;
-
   fgets(buff, sizeof(buff), stdin);
-  sscanf(                     );
+  
+  int z_numerator, z_denominator;
+  sscanf(buff, "%d/%d", &z_numerator, &z_denominator);
 
-  return(               );
+  return(frcCreate(z_numerator, z_denominator));
 }
 
 // 分子と分母の値からFraction型で表される分数を返す
@@ -106,6 +108,11 @@ Fraction getFraction(void)
 //   [戻り値] Fraction型で表現される分数
 Fraction frcCreate(int numerator, int denominator)
 {
+  Fraction frac_create;
+  frac_create.numerator   = numerator;
+  frac_create.denominator = denominator;
+
+  return(frac_create);
 }
 
 // 分数xとyの加算結果を返す
@@ -172,7 +179,7 @@ void frcPrint(Fraction x)
   n = frcGetNumerator(x);
   d = frcGetDenominator(x); 
   
-  if (         ) {
+  if (n < 0 || d < 0) {
     n = -abs(n);
     d = abs(d);
   } else {
@@ -180,7 +187,7 @@ void frcPrint(Fraction x)
     d = abs(d);
   }
   if (n == 0 || d == 1) {
-                                ;
+    printf("%d\n",n)                            ;
   } else {
                                            ;
   }
