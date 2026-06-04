@@ -2,8 +2,8 @@
 #include <stdlib.h> // abs()関数を使用するために必要
 
 typedef struct {
-  int numerator;   // 分子
-  int denominator; // 分母
+    int numerator;   // 分子
+    int denominator; // 分母
 } Fraction;
 
 Fraction getFraction(void);
@@ -21,27 +21,27 @@ int gcm(int m, int n);
 
 main()
 {
-  Fraction a, b, c;
-  int i;
-  char op[] = "+-*/";
+    Fraction a, b, c;
+    int i;
+    char op[] = "+-*/";
 
-  // 2つの分数をキーボードより入力する
-  printf("a: ");
-  a = getFraction();
-  printf("b: ");
-  b = getFraction();
+    // 2つの分数をキーボードより入力する
+    printf("a: ");
+    a = getFraction();
+    printf("b: ");
+    b = getFraction();
 
-  if (frcGetDenominator(a) * frcGetDenominator(b) == 0) {
-    printf("分母が0です\n");
-  } else {
-    // 分数a, bに対して、四則演算を実行する
-    for (i = 0; op[i] != '\0'; i++) {
-      frcPrintOperation(op[i], a, b); // 四則演算の結果表示
+    if (frcGetDenominator(a) * frcGetDenominator(b) == 0) {
+        printf("分母が0です\n");
+    } else {
+        // 分数a, bに対して、四則演算を実行する
+        for (i = 0; op[i] != '\0'; i++) {
+            frcPrintOperation(op[i], a, b); // 四則演算の結果表示
+        }
+        putchar('\n'); // 見やすくするために改行
     }
-    putchar('\n'); // 見やすくするために改行
-  }
 
-  return(0);
+    return(0);
 }
 
 // 分数xと分数yに、2項演算(x op y)を実行した結果を表示する
@@ -50,26 +50,26 @@ main()
 //   [表示例] 1/2 + 1/4 = 3/4
 void frcPrintOperation(char op, Fraction x, Fraction y)
 {
-  Fraction a;
+    Fraction a;
 
-  switch (op) {
-  case '+':
-    a = frcAdd(x, y); break;
-  case '-':
-    a = frcSub(x, y); break;
-  case '*':
-    a = frcMul(x, y); break;
-  case '/':
-    a = frcDiv(x, y); break;
-  default:
-    printf("%c: 演算子が不正です。\n", op);
+    switch (op) {
+    case '+':
+        a = frcAdd(x, y); break;
+    case '-':
+        a = frcSub(x, y); break;
+    case '*':
+        a = frcMul(x, y); break;
+    case '/':
+        a = frcDiv(x, y); break;
+    default:
+        printf("%c: 演算子が不正です。\n", op);
+        return;
+    }
+    a = frcReduction(a);
+    frcPrint(x); printf(" %c ", op); frcPrint(y); printf(" = "); frcPrint(a);
+    putchar('\n');
+
     return;
-  }
-  a = frcReduction(a);
-  frcPrint(x); printf(" %c ", op); frcPrint(y); printf(" = "); frcPrint(a);
-  putchar('\n');
-
-  return;
 }
 
 // Fraction型で表される分数の分子の値を返す
@@ -77,7 +77,7 @@ void frcPrintOperation(char op, Fraction x, Fraction y)
 // [戻り値] 分子の値
 int frcGetNumerator(Fraction x)
 {
-  return(x.numerator);
+    return(x.numerator);
 }
 
 // Fraction型で表される分数の分母の値を返す
@@ -85,7 +85,7 @@ int frcGetNumerator(Fraction x)
 // [戻り値] 分母の値
 int frcGetDenominator(Fraction x)
 {
-  return(x.denominator);
+    return(x.denominator);
 }
 
 // キーボードより、a/bの形で分数を入力する
@@ -93,13 +93,13 @@ int frcGetDenominator(Fraction x)
 // [戻り値] Fraction型で表現される分数
 Fraction getFraction(void)
 {
-  char buff[256];
-  fgets(buff, sizeof(buff), stdin);
-  
-  int z_numerator, z_denominator;
-  sscanf(buff, "%d/%d", &z_numerator, &z_denominator);
+    char buff[256];
+    fgets(buff, sizeof(buff), stdin);
 
-  return(frcCreate(z_numerator, z_denominator));
+    int z_numerator, z_denominator;
+    sscanf(buff, "%d/%d", &z_numerator, &z_denominator);
+
+    return(frcCreate(z_numerator, z_denominator));
 }
 
 // 分子と分母の値からFraction型で表される分数を返す
@@ -108,11 +108,11 @@ Fraction getFraction(void)
 //   [戻り値] Fraction型で表現される分数
 Fraction frcCreate(int numerator, int denominator)
 {
-  Fraction frac_create;
-  frac_create.numerator   = numerator;
-  frac_create.denominator = denominator;
+    Fraction frac_create;
+    frac_create.numerator   = numerator;
+    frac_create.denominator = denominator;
 
-  return(frac_create);
+    return(frac_create);
 }
 
 // 分数xとyの加算結果を返す
@@ -120,6 +120,11 @@ Fraction frcCreate(int numerator, int denominator)
 //   [戻り値] x + y を計算して得られる分数
 Fraction frcAdd(Fraction x, Fraction y)
 {
+    int n, d;
+    n = frcGetNumerator(x) * frcGetDenominator(y) + frcGetNumerator(y) * frcGetDenominator(x);
+    d = frcGetDenominator(x) * frcGetDenominator(y);
+
+    return(frcCreate(n,d));
 }
 
 // 分数xとyの減算結果を返す
@@ -127,6 +132,11 @@ Fraction frcAdd(Fraction x, Fraction y)
 //   [戻り値] x - y を計算して得られる分数
 Fraction frcSub(Fraction x, Fraction y)
 {
+    int n, d;
+    n = frcGetNumerator(x) * frcGetDenominator(y) - frcGetNumerator(y) * frcGetDenominator(x);
+    d = frcGetDenominator(x) * frcGetDenominator(y);
+
+    return(frcCreate(n,d));
 }
 
 // 分数xとyの乗算結果を返す
@@ -134,6 +144,11 @@ Fraction frcSub(Fraction x, Fraction y)
 //   [戻り値] x * y を計算して得られる分数
 Fraction frcMul(Fraction x, Fraction y)
 {
+    int n, d;
+    n = frcGetNumerator(x) * frcGetNumerator(y);
+    d = frcGetDenominator(x) * frcGetDenominator(y);
+
+    return(frcCreate(n,d));
 }
 
 // 分数xとyの除算結果を返す
@@ -141,6 +156,11 @@ Fraction frcMul(Fraction x, Fraction y)
 //   [戻り値] x / y を計算して得られる分数
 Fraction frcDiv(Fraction x, Fraction y)
 {
+    int n, d;
+    n = frcGetNumerator(x) * frcGetDenominator(y);
+    d = frcGetDenominator(x) * frcGetNumerator(y);
+
+    return(frcCreate(n,d));
 }
 
 // 分数xの既約分数を返す
@@ -148,6 +168,24 @@ Fraction frcDiv(Fraction x, Fraction y)
 //   [戻り値] xの既約分数
 Fraction frcReduction(Fraction x)
 {
+    int n, d, gcd;
+    
+    n = frcGetNumerator(x);
+    d = frcGetDenominator(x);
+
+    if(n == 0){
+        return(frcCreate(0,1));
+    }
+    gcd = gcm(n, d);
+    n / gcd;
+    d / gcd;
+
+    if(d < 0){
+        n = -n;
+        d = -d;
+    }
+
+    return(frcCreate(n, d));
 }
 
 // mとnの最大公約数を正数で返す
@@ -155,42 +193,42 @@ Fraction frcReduction(Fraction x)
 //   [戻り値] mとmの最大公約数
 int gcm(int m, int n)
 {
-  int r;
+    int r;
 
-  // 最大公約数を正数にするため、m,nの絶対値をとる
-  m = abs(m);
-  n = abs(n);
+    // 最大公約数を正数にするため、m,nの絶対値をとる
+    m = abs(m);
+    n = abs(n);
 
-  r = m % n;
-  while (r != 0) {
-    m = n;
-    n = r;
     r = m % n;
-  }
-  return(n);
+    while (r != 0) {
+        m = n;
+        n = r;
+        r = m % n;
+    }
+    return(n);
 }
 
 // 分数xを a/b の形で表示する（分数の値が負になるとき、符号は分子につける）
 //   [引　数] x : 表示する分数
 void frcPrint(Fraction x)
 {
-  int n, d;
-  
-  n = frcGetNumerator(x);
-  d = frcGetDenominator(x); 
-  
-  if (n < 0 || d < 0) {
-    n = -abs(n);
-    d = abs(d);
-  } else {
-    n = abs(n);
-    d = abs(d);
-  }
-  if (n == 0 || d == 1) {
-    printf("%d\n",n)                            ;
-  } else {
-                                           ;
-  }
+    int n, d;
 
-  return;
+    n = frcGetNumerator(x);
+    d = frcGetDenominator(x); 
+
+    if (n < 0 || d < 0) {
+        n = -abs(n);
+        d = abs(d);
+    } else {
+        n = abs(n);
+        d = abs(d);
+    }
+    if (n == 0 || d == 1) {
+        printf("%d",n);
+    } else {
+        printf("%d/%d", n, d);
+    }
+
+    return;
 }
