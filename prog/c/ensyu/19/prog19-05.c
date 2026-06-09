@@ -110,14 +110,14 @@ double rctWidth(Rect rct){
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの高さ(縦)の長さ
 double rctHeight(Rect rct){
-
+    return(fabs(ptGetY(rct.p1) - ptGetY(rct.p2)));
 }
 
 // 長方形rctの対角線の長さを返す
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの対角線の長さ
 double rctDiaglen(Rect rct){
-
+    return(sqrt(pow(rctWidth(rct), 2) * pow(rctHeight(rct), 2)));
 }
 
 // 長方形rctの左上隅の点を返す
