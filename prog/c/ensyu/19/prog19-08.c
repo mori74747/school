@@ -2,8 +2,7 @@
 #include <math.h>
 
 typedef struct {
-    double x; // x 座標 
-    double y; // y 座標 
+    double p[2]; // p[0]: x座標, p[1]: y座標
 } Point;
 
 typedef struct {
@@ -62,14 +61,14 @@ main()
 // [引　数] Point型 : p
 // [戻り値] double型: 点pのx座標
 double ptGetX(Point p){
-    return(p.x);
+    return(p.p[0]);
 }
 
 // 点pのy座標を返す
 // [引　数] Point型 : p
 // [戻り値] double型: 点pのy座標
 double ptGetY(Point p){
-    return(p.y);
+    return(p.p[1]);
 }
 
 // 座標(x, y)の点を生成する
@@ -77,8 +76,8 @@ double ptGetY(Point p){
 // [戻り値] Point型 : 座標(x, y)の点
 Point ptCreate(double x, double y){
     Point z;
-    z.x = x;
-    z.y = y;
+    z.p[0] = x;
+    z.p[1] = y;
 
     return(z);
 }
@@ -165,3 +164,4 @@ Rect rctCreate2(Point p, double width, double height){
 
     return(rctCreate1(p1, p2));
 }
+

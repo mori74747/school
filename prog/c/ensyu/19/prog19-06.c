@@ -7,8 +7,9 @@ typedef struct {
 } Point;
 
 typedef struct {
-    Point p1; // 対角線を表す点1 
-    Point p2; // 対角線を表す点2 
+    Point p;       // 左上隅の点を表す点 
+    double width;  // 長方形の幅  (横)
+    double height; // 長方形の高さ(縦)
 } Rect;
 
 double ptGetX(Point p);
@@ -96,21 +97,21 @@ double rctArea(Rect rct){
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの周囲の長さ
 double rctPerim(Rect rct){
-
+    return((rctWidth(rct) + rctHeight(rct)) * 2);
 }
 
 // 長方形rctの幅(横)の長さを返す
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの幅(横)の長さ
 double rctWidth(Rect rct){
-    return(fabs(ptGetX(rct.p1) - ptGetX(rct.p2)));
+    return(rct.width);
 }
 
 // 長方形rctの高さ(縦)の長さを返す
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの高さ(縦)の長さ
 double rctHeight(Rect rct){
-    return(fabs(ptGetY(rct.p1) - ptGetY(rct.p2)));
+    return(rct.height);
 }
 
 // 長方形rctの対角線の長さを返す
@@ -124,7 +125,7 @@ double rctDiaglen(Rect rct){
 // [引　数] Rect型  : 長方形rct
 // [戻り値] Point型 : 長方形rctの左上隅の点
 Point rctTopLeftCorner(Rect rct){
-    return(rct.p1);
+    return(rct.p);
 }
 
 // 対角線を表す2点p1とp2から、長方形を生成する
@@ -132,8 +133,9 @@ Point rctTopLeftCorner(Rect rct){
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate1(Point p1, Point p2){
     Rect z;
-    z.p1 = p1;
-    z.p2 = p2;
+    z.p = p1;
+    z.width  = fabs(p1.x - p2.x);
+    z.height = fabs(p1.y - p2.y);
 
     return (z);
 }
@@ -143,9 +145,7 @@ Rect rctCreate1(Point p1, Point p2){
 //  　　　  double型: 幅(横)の長さwidth, 高さ(縦)の長さheight
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate2(Point p, double width, double height){
-    Rect z;
-    z.p1 = p;
-    z.p2 = ptCreate(ptGetX(p) + width, ptGetY(p) + height);
-    return(z);
+    Point o = ptCreate(ptGetX(p) + width, ptGetY(p) - height);
+    return(rctCreate1(p, o));
 }
 
