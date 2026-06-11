@@ -154,7 +154,7 @@ Rect rctCreate1(Point p1, Point p2){
 }
 
 // 左上隅の1点pと、幅(横)widthおよび高さ(縦)heightの長さから、長方形を生成する
-// [引　数] Point型 : 左上隅の点p ,
+// [引　数] Point型 : 左上隅の点p
 //  　　　  double型: 幅(横)の長さwidth, 高さ(縦)の長さheight
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate2(Point p, double width, double height){
