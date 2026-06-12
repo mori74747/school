@@ -120,7 +120,6 @@ Fraction frcCreate(int numerator, int denominator)
 //   [戻り値] x + y を計算して得られる分数
 Fraction frcAdd(Fraction x, Fraction y)
 {
-    int n, d;
     int x_dem = frcGetDenominator(x);
     int y_dem = frcGetDenominator(y);
     int lcm = x_dem * y_dem / gcm(x_dem, y_dem); 
@@ -136,9 +135,12 @@ Fraction frcAdd(Fraction x, Fraction y)
 //   [戻り値] x - y を計算して得られる分数
 Fraction frcSub(Fraction x, Fraction y)
 {
-    int n, d;
-    n = frcGetNumerator(x) * frcGetDenominator(y) - frcGetNumerator(y) * frcGetDenominator(x);
-    d = frcGetDenominator(x) * frcGetDenominator(y);
+    int x_dem = frcGetDenominator(x);
+    int y_dem = frcGetDenominator(y);
+    int lcm = x_dem * y_dem / gcm(x_dem, y_dem); 
+
+    int n = ((lcm / x_dem) * frcGetNumerator(x)) - ((lcm / y_dem) * frcGetNumerator(y));
+    int d = lcm;
 
     return(frcCreate(n,d));
 }
@@ -181,8 +183,8 @@ Fraction frcReduction(Fraction x)
         return(frcCreate(0,1));
     }
     gcd = gcm(n, d);
-    n / gcd;
-    d / gcd;
+    n /= gcd;
+    d /= gcd;
 
     if(d < 0){
         n = -n;
@@ -204,7 +206,7 @@ int gcm(int m, int n)
     n = abs(n);
 
     r = m % n;
-    while (r != 0) {
+    while(r != 0){
         m = n;
         n = r;
         r = m % n;
@@ -221,16 +223,16 @@ void frcPrint(Fraction x)
     n = frcGetNumerator(x);
     d = frcGetDenominator(x); 
 
-    if (n < 0 || d < 0) {
+    if((n < 0 && d >= 0) || (n >= 0&& d < 0)){
         n = -abs(n);
         d = abs(d);
-    } else {
+    }else{
         n = abs(n);
         d = abs(d);
     }
-    if (n == 0 || d == 1) {
+    if(n == 0 || d == 1){
         printf("%d",n);
-    } else {
+    }else{
         printf("%d/%d", n, d);
     }
 
