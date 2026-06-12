@@ -117,8 +117,8 @@ double rctHeight(Rect rct){
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの対角線の長さ
 double rctDiaglen(Rect rct){
-    int width  = rctWidth(rct);
-    int height = rctHeight(rct);
+    double width  = rctWidth(rct);
+    double height = rctHeight(rct);
     return(sqrt(width*width + height*height));
 }
 
