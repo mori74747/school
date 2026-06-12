@@ -121,8 +121,12 @@ Fraction frcCreate(int numerator, int denominator)
 Fraction frcAdd(Fraction x, Fraction y)
 {
     int n, d;
-    n = frcGetNumerator(x) * frcGetDenominator(y) + frcGetNumerator(y) * frcGetDenominator(x);
-    d = frcGetDenominator(x) * frcGetDenominator(y);
+    int x_dem = frcGetDenominator(x);
+    int y_dem = frcGetDenominator(y);
+    int lcm = x_dem * y_dem / gcm(x_dem, y_dem); 
+
+    int n = ((lcm / x_dem) * frcGetNumerator(x)) + ((lcm / y_dem) * frcGetNumerator(y));
+    int d = lcm;
 
     return(frcCreate(n,d));
 }

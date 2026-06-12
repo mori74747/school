@@ -118,7 +118,9 @@ double rctHeight(Rect rct){
 // [引　数] Rect型  : 長方形rct
 // [戻り値] double型: 長方形rctの対角線の長さ
 double rctDiaglen(Rect rct){
-    return(sqrt(pow(rctWidth(rct), 2) * pow(rctHeight(rct), 2)));
+    int width  = rctWidth(rct);
+    int height = rctHeight(rct);
+    return(sqrt(width*width + height*height));
 }
 
 // 長方形rctの左上隅の点を返す
@@ -145,7 +147,10 @@ Rect rctCreate1(Point p1, Point p2){
 //  　　　  double型: 幅(横)の長さwidth, 高さ(縦)の長さheight
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate2(Point p, double width, double height){
-    Point o = ptCreate(ptGetX(p) + width, ptGetY(p) - height);
-    return(rctCreate1(p, o));
+    
+    Point p1 = p;
+    Point p2 = ptCreate(ptGetX(p) + width, ptGetY(p) - height);
+
+    return(rctCreate1(p1, p2));
 }
 
