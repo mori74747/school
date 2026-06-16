@@ -151,11 +151,12 @@ Rect rctCreate1(Point p1, Point p2){
     }else{
         TopLeftPoint_y = p1_y;
     }
-    Point z_p = ptCreate(TopLeftPoint_x, TopLeftPoint_y);
-    double width  = fabs(p1.x - p2.x);
-    double height = fabs(p1.y - p2.y);
+    Rect z;
+    z.p = ptCreate(TopLeftPoint_x, TopLeftPoint_y);
+    z.width  = fabs(p1_x - p2_x);
+    z.height = fabs(p1_y - p2_y);
 
-    return (rctCreate2(z_p, width, height));
+    return (z);
 }
 
 // 左上隅の1点pと、幅(横)widthおよび高さ(縦)heightの長さから、長方形を生成する
@@ -164,11 +165,9 @@ Rect rctCreate1(Point p1, Point p2){
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate2(Point p, double width, double height){
     
-    Rect z;
-    z.p = p;
-    z.width = width;
-    z.height = height;
-    
-    return(z);
+    Point p1 = p;
+    Point p2 = ptCreate(ptGetX(p) + width, ptGetY(p) - height);
+
+    return(rctCreate1(p1,p2));
 }
 
