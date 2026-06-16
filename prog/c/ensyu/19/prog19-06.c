@@ -134,13 +134,13 @@ Point rctTopLeftCorner(Rect rct){
 // [引　数] Point型 : 対角線を表す p1, p2
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate1(Point p1, Point p2){
-    Rect z;
+    
     double TopLeftPoint_x;
     double TopLeftPoint_y;
-    double p1_x = p1.x;
-    double p1_y = p1.y;
-    double p2_x = p2.x;
-    double p2_y = p2.y;
+    double p1_x = ptGetX(p1);
+    double p1_y = ptGetY(p1);
+    double p2_x = ptGetX(p2);
+    double p2_y = ptGetY(p2);
     if(p1_x < p2_x){
         TopLeftPoint_x = p1_x;
     }else{
@@ -151,11 +151,11 @@ Rect rctCreate1(Point p1, Point p2){
     }else{
         TopLeftPoint_y = p1_y;
     }
-    z.p = ptCreate(TopLeftPoint_x, TopLeftPoint_y);
-    z.width  = fabs(p1.x - p2.x);
-    z.height = fabs(p1.y - p2.y);
+    Point z_p = ptCreate(TopLeftPoint_x, TopLeftPoint_y);
+    double width  = fabs(p1.x - p2.x);
+    double height = fabs(p1.y - p2.y);
 
-    return (z);
+    return (rctCreate2(z_p, width, height));
 }
 
 // 左上隅の1点pと、幅(横)widthおよび高さ(縦)heightの長さから、長方形を生成する
@@ -164,9 +164,11 @@ Rect rctCreate1(Point p1, Point p2){
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate2(Point p, double width, double height){
     
-    Point p1 = p;
-    Point p2 = ptCreate(ptGetX(p) + width, ptGetY(p) - height);
-
-    return(rctCreate1(p1, p2));
+    Rect z;
+    z.p = p;
+    z.width = width;
+    z.height = height;
+    
+    return(z);
 }
 

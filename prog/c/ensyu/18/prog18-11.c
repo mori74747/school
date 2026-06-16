@@ -135,14 +135,8 @@ Fraction frcAdd(Fraction x, Fraction y)
 //   [戻り値] x - y を計算して得られる分数
 Fraction frcSub(Fraction x, Fraction y)
 {
-    int x_dem = frcGetDenominator(x);
-    int y_dem = frcGetDenominator(y);
-    int lcm = x_dem * y_dem / gcm(x_dem, y_dem); 
-
-    int n = ((lcm / x_dem) * frcGetNumerator(x)) - ((lcm / y_dem) * frcGetNumerator(y));
-    int d = lcm;
-
-    return(frcCreate(n,d));
+    Fraction minus_y = frcCreate(-frcGetNumerator(y), frcGetDenominator(y));
+    return(frcAdd(x, minus_y));
 }
 
 // 分数xとyの乗算結果を返す
@@ -162,11 +156,8 @@ Fraction frcMul(Fraction x, Fraction y)
 //   [戻り値] x / y を計算して得られる分数
 Fraction frcDiv(Fraction x, Fraction y)
 {
-    int n, d;
-    n = frcGetNumerator(x) * frcGetDenominator(y);
-    d = frcGetDenominator(x) * frcGetNumerator(y);
-
-    return(frcCreate(n,d));
+    Fraction reverse_y = frcCreate(frcGetDenominator(y), frcGetNumerator(y));
+    return(frcMul(x, reverse_y));
 }
 
 // 分数xの既約分数を返す
