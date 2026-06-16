@@ -135,7 +135,23 @@ Point rctTopLeftCorner(Rect rct){
 // [戻り値] Rect型  : p1とp2が対角線上にある長方形
 Rect rctCreate1(Point p1, Point p2){
     Rect z;
-    z.p = p1;
+    double TopLeftPoint_x;
+    double TopLeftPoint_y;
+    double p1_x = p1.x;
+    double p1_y = p1.y;
+    double p2_x = p2.x;
+    double p2_y = p2.y;
+    if(p1_x < p2_x){
+        TopLeftPoint_x = p1_x;
+    }else{
+        TopLeftPoint_x = p2_x;
+    }
+    if(p1_y < p2_y){
+        TopLeftPoint_y = p2_y;
+    }else{
+        TopLeftPoint_y = p1_y;
+    }
+    z.p = ptCreate(TopLeftPoint_x, TopLeftPoint_y);
     z.width  = fabs(p1.x - p2.x);
     z.height = fabs(p1.y - p2.y);
 
