@@ -21,6 +21,7 @@ main()
 int threeTimes(void)
 {
   static int mul = 1;
+  int back_mul = mul;
   mul *= 3;
-  return(mul);
+  return(back_mul);
 }
