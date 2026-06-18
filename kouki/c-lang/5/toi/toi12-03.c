@@ -6,7 +6,7 @@ main()
     int  n, m;
     char buff[256];
     
-    printf("n文字 m行 の四角形\n");
+    printf("n文字 m行 の四角形\nn m\n");
     fgets(buff, sizeof(buff), stdin);
     sscanf(buff, "%d %d", &n, &m);
 
