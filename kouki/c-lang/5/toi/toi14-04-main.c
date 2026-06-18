@@ -9,7 +9,7 @@ int data[1000];
 main(){
 
     char buff[256];
-    printf("nを入力: ");
+    printf("データ個数: ");
     fgets(buff, sizeof(buff), stdin);
     sscanf(buff, "%d", &n);
 
