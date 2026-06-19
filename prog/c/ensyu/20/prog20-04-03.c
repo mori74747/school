@@ -2,10 +2,11 @@
 #include <hamakou.h>
 #include <math.h>
 
+#define FREQ 100e3
+
 // Complex型の定義 
 typedef struct {
-    double real;  // 実数部 
-    double imag;  // 虚数部 
+    double cmplx[2]; // cmplx[0]:実数部　 cmplx[1]:虚数部
 } Complex;
 
 // 抽象データ型として扱うために必要になる関数群
@@ -18,33 +19,27 @@ Complex cCreate(double a, double b);  // a + bj の設定
 double  cReal(Complex x);             // 実数部の取得  
 double  cImag(Complex x);             // 虚数部の取得  
 
+// 回路の計算用に必要な関数群
+Complex cImpedance(double L, double C, double R);
+double  cSize(Complex Z);
+double  cRad(Complex Z);
+
 main()
 {
-    Complex x, y, z;
-    double a, b;
+    double L, C, R;
+    L = 200e-6;
+    C = 0.127e-6;
+    R = 25;
 
-    printf("x <- 実数部 虚数部："); // 実数部と虚数部の入力
-    scanf("%lg %lg", &a, &b);
-    x = cCreate(a, b);              // 複素数ｘの初期化
+    Complex Z;
+    double  Z_size, Z_rad;
+    Z      = cImpedance(L, C, R);
+    Z_size = cSize(Z);
+    Z_rad  = cRad(Z);
 
-    printf("y <- 実数部 虚数部："); // 実数部と虚数部の入力
-    scanf("%lg %lg", &a, &b);
-    y = cCreate(a, b);              // 複素数ｙの初期化
-
-    putchar('\n');
-    printf("複素数 x = "); cPrint(x); putchar('\n');
-    printf("複素数 y = "); cPrint(y); putchar('\n');
-    printf("の四則演算\n");
-
-    z = cAdd(x, y); // 加算 
-    printf("x + y = "); cPrint(z); putchar('\n');
-    z = cSub(x, y); // 減算 
-    printf("x - y = "); cPrint(z); putchar('\n');
-    z = cMul(x, y); // 乗算 
-    printf("x * y = "); cPrint(z); putchar('\n');
-    z = cDiv(x, y); // 徐算 
-    printf("x / y = "); cPrint(z); putchar('\n');
-
+    printf("Z = "); cPrint(Z);        printf(" [Ω]\n");
+    printf("Zの大きさ = %g", Z_size);  printf(" [Ω]\n");
+    printf("Zの位相角 = %g", Z_rad);   printf(" [rad]\n");
     return(0);
 }
 
@@ -111,7 +106,6 @@ Complex cDiv(Complex x, Complex y)
     double denominator = real_y*real_y + imag_y*imag_y;
 
     if(denominator == 0){
-        printf("0除算エラー\n");
         return;
     }
     // 虚数部だけminusなyを作る
@@ -135,7 +129,6 @@ void cPrint(Complex x)
 {
     double x_real = cReal(x);
     double x_imag = cImag(x);
-    double plus_x_imag = fabs(x_imag);
 
     if(x_real != 0 || (x_real == 0 && x_imag == 0)){
         printf("%g", cReal(x));
@@ -148,17 +141,14 @@ void cPrint(Complex x)
         }else{
             printf("-");
         }
-        printf("%gj", plus_x_imag);
+        printf("%gj", fabs(x_imag));
 
     }else if(x_imag > 0){
 
         if(x_real != 0){
             printf(" + ");
         }
-        if(plus_x_imag != 1){
-            printf("%g", plus_x_imag);
-        }
-        printf("j");
+        printf("%gj", fabs(x_imag));
     }
     return;
 }
@@ -171,8 +161,8 @@ void cPrint(Complex x)
 Complex cCreate(double a, double b)
 {
     Complex x;
-    x.real = a;
-    x.imag = b;
+    x.cmplx[0] = a;
+    x.cmplx[1] = b;
 
     return(x);
 }
@@ -184,7 +174,7 @@ Complex cCreate(double a, double b)
 ----------------------------------------*/
 double cReal(Complex x)
 {
-    return(x.real);
+    return(x.cmplx[0]);
 }
 
 /*----------------------------------------
@@ -194,5 +184,50 @@ double cReal(Complex x)
 ----------------------------------------*/
 double cImag(Complex x)
 {
-    return(x.imag);
+    return(x.cmplx[1]);
+}
+
+/*----------------------------------------
+[引　数] : Complex型  L, C, R （インダクタンス L, 静電容量 C, 抵抗 R）
+[戻り値] : Complex型  Z
+[機　能] : L, C, R の合成インピーダンスを返す
+----------------------------------------*/
+Complex cImpedance(double L, double C, double R){
+
+    double rad = 2 * M_PI * FREQ;
+    Complex one = cCreate(1.0,0.0);
+    Complex Z1 = cCreate(0.0, -1.0 / (rad * C));
+    Complex Z2 = cDiv(one, Z1);
+    Complex Z3 = cDiv(one, cCreate(R, rad * L));
+
+    Complex Z4 = cAdd(Z2, Z3);
+    Complex Z  = cDiv(one, Z4);
+
+    return(Z);
+}
+
+/*----------------------------------------
+[引　数] : Complex型  Z (インピーダンス Z)
+[戻り値] : double 型  Z_size (インピーダンスZの大きさ|Z|)
+[機　能] : インピーダンスZの大きさ|Z|を返す。
+----------------------------------------*/
+double cSize(Complex Z){
+
+    double Z_real = cReal(Z);
+    double Z_imag = cImag(Z);
+
+    return(sqrt(Z_real*Z_real + Z_imag*Z_imag));
+}
+
+/*----------------------------------------
+[引　数] : Complex型  Z (インピーダンス Z)
+[戻り値] : double 型  Z_rad (インピーダンスZの位相角Θ)
+[機　能] : インピーダンスZの位相角Θを返す。
+----------------------------------------*/
+double cRad(Complex Z){
+
+    double Z_real = cReal(Z);
+    double Z_imag = cImag(Z);
+
+    return(atan((Z_imag / Z_real)));
 }
