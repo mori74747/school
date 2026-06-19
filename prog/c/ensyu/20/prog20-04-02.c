@@ -110,7 +110,7 @@ Complex cDiv(Complex x, Complex y)
     double denominator = real_y*real_y + imag_y*imag_y;
 
     if(denominator == 0){
-        printf("0除算エラー\n");
+        printf("---0除算エラー---\n");
         return;
     }
     // 虚数部だけminusなyを作る

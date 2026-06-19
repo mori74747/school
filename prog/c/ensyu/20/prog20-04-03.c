@@ -2,8 +2,6 @@
 #include <hamakou.h>
 #include <math.h>
 
-#define FREQ 100e3
-
 // Complex型の定義 
 typedef struct {
     double cmplx[2]; // cmplx[0]:実数部　 cmplx[1]:虚数部
@@ -20,20 +18,21 @@ double  cReal(Complex x);             // 実数部の取得
 double  cImag(Complex x);             // 虚数部の取得  
 
 // 回路の計算用に必要な関数群
-Complex cImpedance(double L, double C, double R);
+Complex cImpedance(double L, double C, double R, double freq);
 double  cSize(Complex Z);
 double  cRad(Complex Z);
 
 main()
 {
-    double L, C, R;
+    double L, C, R, freq;
     L = 200e-6;
     C = 0.127e-6;
     R = 25;
+    freq = 100e3;
 
     Complex Z;
     double  Z_size, Z_rad;
-    Z      = cImpedance(L, C, R);
+    Z      = cImpedance(L, C, R, freq);
     Z_size = cSize(Z);
     Z_rad  = cRad(Z);
 
@@ -106,6 +105,7 @@ Complex cDiv(Complex x, Complex y)
     double denominator = real_y*real_y + imag_y*imag_y;
 
     if(denominator == 0){
+        printf("---0除算エラー---\n");
         return;
     }
     // 虚数部だけminusなyを作る
@@ -192,9 +192,9 @@ double cImag(Complex x)
 [戻り値] : Complex型  Z
 [機　能] : L, C, R の合成インピーダンスを返す
 ----------------------------------------*/
-Complex cImpedance(double L, double C, double R){
+Complex cImpedance(double L, double C, double R, double freq){
 
-    double rad = 2 * M_PI * FREQ;
+    double rad = 2 * M_PI * freq;
     Complex one = cCreate(1.0,0.0);
     Complex Z1 = cCreate(0.0, -1.0 / (rad * C));
     Complex Z2 = cDiv(one, Z1);
