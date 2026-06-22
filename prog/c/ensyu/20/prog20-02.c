@@ -112,7 +112,7 @@ Complex cDiv(Complex x, Complex y)
 
     if(denominator == 0){
         printf("---0除算エラー---\n");
-        return;
+        return(cCreate(NAN, NAN));
     }
     // 虚数部だけminusなyを作る
     Complex imag_minus_y;
@@ -148,7 +148,10 @@ void cPrint(Complex x)
         }else{
             printf("-");
         }
-        printf("%gj", plus_x_imag);
+        if(plus_x_imag != 1){
+            printf("%g", plus_x_imag);
+        }
+        printf("j");
 
     }else if(x_imag > 0){
 

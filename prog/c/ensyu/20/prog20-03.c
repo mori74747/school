@@ -107,7 +107,7 @@ Complex cDiv(Complex x, Complex y)
 
     if(denominator == 0){
         printf("---0除算エラー---\n");
-        return;
+        return(cCreate(NAN, NAN));
     }
     // 虚数部だけminusなyを作る
     Complex imag_minus_y;
@@ -130,6 +130,7 @@ void cPrint(Complex x)
 {
     double x_real = cReal(x);
     double x_imag = cImag(x);
+    double plus_x_imag = fabs(x_imag);
 
     if(x_real != 0 || (x_real == 0 && x_imag == 0)){
         printf("%g", cReal(x));
@@ -142,14 +143,20 @@ void cPrint(Complex x)
         }else{
             printf("-");
         }
-        printf("%gj", fabs(x_imag));
+        if(plus_x_imag != 1){
+            printf("%g", plus_x_imag);
+        }
+        printf("j");
 
     }else if(x_imag > 0){
 
         if(x_real != 0){
             printf(" + ");
         }
-        printf("%gj", fabs(x_imag));
+        if(plus_x_imag != 1){
+            printf("%g", plus_x_imag);
+        }
+        printf("j");
     }
     return;
 }
@@ -230,5 +237,5 @@ double cRad(Complex Z){
     double Z_real = cReal(Z);
     double Z_imag = cImag(Z);
 
-    return(atan((Z_imag / Z_real)));
+    return(atan2(Z_imag, Z_real));
 }
