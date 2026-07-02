@@ -34,7 +34,7 @@ int hailstones(int n){
     ct++;
   }
   // 最後の1の表示／カウント
-  printf("1\n");
+  printf("%d\n",n);
   ct++;
   return(ct);
 }
