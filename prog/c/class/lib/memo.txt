@@ -1,0 +1,9 @@
+スタティックリンク／ライブラリ(.so [shared object])
+    cc -c fraction.c                        // fraction.oの生成
+    ar crv libfraction.a fraction.o         // fraction.aの生成
+    cc prog18-11-main.c -L . -l fraction    // a.out
+ダイナミックリンク／ライブラリ(.a  [archive])
+    cc -shared -fPIC -o libfraction.so fraction.c
+    cc prog18-11-main.c -L . -l fraction
+
+最後のa.outを作るときには、ダイナミックリンクが優先される
