@@ -20,8 +20,8 @@ main()
   int i;
 
   for (i = 0; i < 4; i++){
-    printf("%d %s の合計点は",         ,           );
-    printf("           \n",                                );
+    printf("%d %s の合計点は", data[i].id, data[i].name);
+    printf(" %d 点です。\n", data[i].kokugo + data[i].suugaku + data[i].eigo);
   }
 
   return(0);
