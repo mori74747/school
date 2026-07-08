@@ -10,6 +10,10 @@ struct student {
 main()
 {
   struct student my_data;
+  {
+    /* data */
+  };
+  
 
   my_data.gakunen = getint("学年: ");
   my_data.kumi = getint("組: ");

@@ -17,10 +17,8 @@ main()
 
   printf("日付１(yyyy/mm/dd): ");
   Date1 = getDate();
-
   printf("日付２(yyyy/mm/dd): ");
   Date2 = getDate();
-
   Date3 = laterDate(Date1, Date2); 
   printDate(Date3);
 
@@ -34,6 +32,13 @@ main()
 // [戻り値] yyyy/mm/dd 形式で入力された Date型の値
 Date getDate(void)
 {
+  char buff[256];
+  fgets(buff, sizeof(buff), stdin);
+
+  Date date;
+  sscanf(buff, "%u/%u/%u", &date.year, &date.month, &date.day);
+
+  return(date);
 }
 
 // Data型の値を yyyy/mm/dd の形式で表示する
@@ -41,6 +46,8 @@ Date getDate(void)
 // [戻り値] なし
 void printDate(Date date)
 {
+  printf("%04u/%02u/%02u\n", date.year, date.month, date.day);
+  return;
 }
 
 // 引数で与えられた２つの日付の新しい方を返す
@@ -48,4 +55,34 @@ void printDate(Date date)
 // [戻り値] date1 と date2 の新しい方の日付
 Date laterDate(Date date1, Date date2)
 {
+  unsigned int date1_year  = date1.year;
+  unsigned int date2_year  = date2.year;
+  unsigned int date1_month = date1.month;
+  unsigned int date2_month = date2.month;
+  unsigned int date1_day   = date1.day;
+  unsigned int date2_day   = date2.day;
+
+  if(date1_year < date2_year){
+    return(date1);
+  }
+  else if(date1_year > date2_year){
+    return(date2);
+  }
+  else{
+    if(date1_month < date2_month){
+      return(date1);
+    }
+    else if(date1_month > date2_month){
+      return(date2);
+    }
+    else{
+      if(date1_day < date2_day){
+        return(date1);
+      }
+      else{
+        return(date2);
+      }
+    }
+  }
+
 }
