@@ -1,7 +1,7 @@
 #include <stdio.h>
 /*
 [予想]
-3 
+iのアドレス 10 3 2 
 
 */
 main()
