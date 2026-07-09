@@ -73,11 +73,11 @@ Time timeAdd(Time time1, Time time2)
   minutes = getMinutes(time1) + getMinutes(time2);
 
   if(60 <= minutes){
-    minutes /= 60;
+    minutes -= 60;
     hour += 1;
   }
   if(24 <= hour){
-    hour /= 24;
+    hour -= 24;
     day += 1;
   }
 

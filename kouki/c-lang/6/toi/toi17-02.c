@@ -1,5 +1,9 @@
 #include <stdio.h>
+/*
+[予想]
+3 
 
+*/
 main()
 {
   unsigned int i = 3, *p = &i;

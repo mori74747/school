@@ -7,10 +7,10 @@ main()
   int  i;
 
   for (i = 0; i < 10; i++) {
-                   =              * 2;
+    *(twice + i) = *(source + i) * 2;
   }
   for (i = 0; i < 10; i++) {
-    printf("source[%d] = %d, twice[%d] = %d\n", i,               , i,               );
+    printf("source[%d] = %3d, twice[%d] = %3d\n", i, *(source + i), i, *(twice + i));
   }
 
   return(0);

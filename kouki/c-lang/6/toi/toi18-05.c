@@ -9,7 +9,7 @@ main()
   printf("［例 Tarou/Hamakou ］: ");
   mei = fgets(name, sizeof(name), stdin);
 
-  *(                     ) = '\0';
+  *(strchr(name, '/')) = '\0';
 
   sei =                 ;
 

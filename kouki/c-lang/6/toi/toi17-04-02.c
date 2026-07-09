@@ -6,7 +6,8 @@ main()
 {
   int x, y;
 
-  input(    ,    );
+
+  input( &x, &y );
   printf("x: %d, y: %d\n", x, y);
 
   return(0);
@@ -14,7 +15,7 @@ main()
 
 void input(int *p, int *q)
 {
-  scanf("%d %d",     ,    );
+  scanf("%d %d", p, q);
 
   return;
 }
