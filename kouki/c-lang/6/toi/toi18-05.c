@@ -9,15 +9,13 @@ main()
   printf("［例 Tarou/Hamakou ］: ");
   mei = fgets(name, sizeof(name), stdin);
 
-  *(strchr(name, '/')) = '\0';
-
-  sei =                 ;
+  sei = strchr(name, '/');
 
   if (sei == NULL) {
     printf("入力した文字列に\"/\"が含まれていません。\n");
   } else {
-    *sei =     ;
-    sei =        ;
+    *sei = '\0';
+    sei = sei+1;
     printf("名: %s, 姓: %s\n", mei, sei);
   }
 

@@ -62,21 +62,21 @@ Date laterDate(Date date1, Date date2)
   unsigned int date1_day   = date1.day;
   unsigned int date2_day   = date2.day;
 
-  if(date1_year < date2_year){
+  if(date1_year > date2_year){
     return(date1);
   }
-  else if(date1_year > date2_year){
+  else if(date1_year < date2_year){
     return(date2);
   }
   else{
-    if(date1_month < date2_month){
+    if(date1_month > date2_month){
       return(date1);
     }
-    else if(date1_month > date2_month){
+    else if(date1_month < date2_month){
       return(date2);
     }
     else{
-      if(date1_day < date2_day){
+      if(date1_day > date2_day){
         return(date1);
       }
       else{
