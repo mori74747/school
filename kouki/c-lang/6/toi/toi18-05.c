@@ -9,6 +9,7 @@ main()
   printf("［例 Tarou/Hamakou ］: ");
   mei = fgets(name, sizeof(name), stdin);
 
+  name[strcspn(name, "\n")] = '\0';
   sei = strchr(name, '/');
 
   if (sei == NULL) {
@@ -18,6 +19,6 @@ main()
     sei = sei+1;
     printf("名: %s, 姓: %s\n", mei, sei);
   }
-
+  
   return(0);
 }

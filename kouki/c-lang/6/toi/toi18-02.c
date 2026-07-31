@@ -10,11 +10,10 @@ main()
 
   p = week;
   for (i = 0; i < 7; i++) {
-    printf("%c"  , *(*p + 0));
-    printf("%c"  , *(*p + 1));
-    printf("%c\n", *(*p + 2));
-    p++;
+    for(int j = 0; j < 3; j++){
+        printf("%c", *(*(p + i) + j));
+    }
+    putchar('\n');
   }
-
   return(0);
 }
