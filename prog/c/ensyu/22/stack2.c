@@ -19,12 +19,11 @@ void initStack(Stack *s){
 ［戻り値］正常終了＝１，スタック・オーバーフロー＝０
 ---------------------------------------*/
 int push(Stack *s, int data){
-    int now_sp = s->sp;
-    if(now_sp >= STACK_SIZE-1){
+    if(s->sp >= STACK_SIZE-1){
         return(0);
     }else{
-        s->storage[now_sp+1] = data;
-        s->sp = now_sp+1;
+        s->storage[s->sp+1] = data;
+        s->sp++;
         return(1);
     }
 }
@@ -36,12 +35,11 @@ int push(Stack *s, int data){
 ［戻り値］正常終了＝１，スタック・アンダーフロー＝０
 ---------------------------------------*/
 int pop(Stack *s, int *data){
-    int now_sp = s->sp;
-    if(now_sp <= -1){
+    if(s->sp <= -1){
         return(0);
     }else{
-        *data = s->storage[now_sp];
-        s->sp = now_sp-1;
+        *data = s->storage[s->sp];
+        s->sp--;
         return(1);
     }
 }
