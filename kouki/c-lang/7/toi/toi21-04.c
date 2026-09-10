@@ -10,6 +10,7 @@ main()
   n = getint("");
 
   if(n < 1 || 48 < n){
+    printf("有効なトランプを指定してください\n");
     return(1);
   }
 
