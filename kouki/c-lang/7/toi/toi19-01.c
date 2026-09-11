@@ -53,7 +53,11 @@ int main(int argc, char *argv[]){
             printf("オプションとして使用できません。\n");
         }
         //  個数の入力
-        sscanf(&argv[i][2], "%d", &count);
+        if(argv[i][2] >= '0' && argv[i][2] <= '9'){
+          sscanf(&argv[i][2], "%d", &count);
+        }else{
+          count = 1;
+        }
         //  統計に加算
         goukei = prise * count;
         total += goukei;

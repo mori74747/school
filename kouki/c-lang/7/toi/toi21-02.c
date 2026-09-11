@@ -20,7 +20,7 @@ main()
   }
 
   for (i = 0; i < 10; i++) {
-    printf("%d枚目のカードは%cの%dです。\n", i,card[i].mark, card[i].num);
+    printf("%d枚目のカードは%cの%dです。\n", i+1,card[i].mark, card[i].num);
   }
 
   free(card);
