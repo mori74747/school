@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "hamakou.h"
 #include "stack.h"
 
@@ -9,6 +11,8 @@
 void CardSet(int card[]);
 void CreatePile(int card[], Stack* pile1, Stack* pile2);
 void ShowResults(Stack* pile1, Stack* pile2);
+
+char MarkCheck(int card);
 
 main(){
 
@@ -22,6 +26,9 @@ main(){
     int card[53];
 
     Stack pile1, pile2;         // カードから作った山
+    initStack(&pile1);          // スタックの初期化
+    initStack(&pile2);
+
     int i;                      // カウンタ変数
 
     int card1;                  // プレイヤー1のカード
@@ -47,7 +54,7 @@ main(){
 void CardSet(int card[]){
     int i;      // カウンタ変数
     for(i = 0; i < TRUMP_SIZE; i++){
-        card[i] = i+1;
+        card[i] = i;
     }
 
     int j, k;               // j,k: 発生した乱数を格納
@@ -61,6 +68,7 @@ void CardSet(int card[]){
         card[j] = card[k];          //   |- 2枚のカードを交換      
         card[k] = temp;             // --+                         
     }
+    return;
 }
 
 /*-------------------------------------------------
@@ -72,13 +80,15 @@ void CardSet(int card[]){
 -------------------------------------------------*/
 void CreatePile(int card[], Stack* pile1, Stack* pile2){
 
-    int i = 0;               // カウンタ変数
+    int i = 0;    // カウンタ変数
     while(i < PILE_SIZE*2){
         push(pile1, card[i]);
         i++;
         push(pile2, card[i]);
         i++;
     }
+
+    return;
 }
 
 /*-------------------------------------------------
@@ -88,19 +98,119 @@ void CreatePile(int card[], Stack* pile1, Stack* pile2){
 [機 能] トランプの山2つから、1枚ずつ捲ってゲームの結果を出力する
 -------------------------------------------------*/
 void ShowResults(Stack* pile1, Stack* pile2){
-    int card1;  // プレイヤー1のカード
-    int card2;  // プレイヤー2のカード
+    int  card1;  // プレイヤー1のカード
+    int  card2;  // プレイヤー2のカード
+    int  num1;   // プレイヤー1のカードの数字
+    int  num2;   // プレイヤー2のカードの数字
+    char mark1;  // プレイヤー1のカードのマーク
+    char mark2;  // プレイヤー2のカードのマーク
+    char game;   // ゲームの勝敗 '<' or '>' or '='
+
+    int point1 = 0;  // プレイヤー1の総得点
+    int point2 = 0;  // プレイヤー2の総得点
 
     int i;      // カウンタ変数
     for(i = 1; i <= PILE_SIZE; i++){
-        pop(&pile1, card1);
-        pop(&pile2, card2);
+        // 1枚ずつ取り出す
+        pop(pile1, &card1);
+        pop(pile2, &card2);
 
-        printf("(%2d回目)%9s",i,"Player1:");
-        if(card1 >= 53){
-            
-        }
+        printf("(%2d回目)",i);
         
+        // マークのチェック
+        mark1 = MarkCheck(card1);
+        mark2 = MarkCheck(card2);
+
+        num1 = card1 % 13 + 1;
+        num2 = card2 % 13 + 1;
+
+        if(mark1 == 'J' && mark2 == 'J'){
+            game = '=';
+            point1++;
+            point2++;
+        }else if(mark1 == 'J'){
+            game = '>';
+            point1 += 2;
+        }else if(mark2 == 'J'){
+            game = '<';
+            point2 += 2;
+        }else if(num1 > num2){
+            game = '>';
+            point1 += 2;
+        }else if(num1 < num2){
+            game = '<';
+            point2 += 2;
+        }else{
+            game = '=';
+            point1++;
+            point2++;
+        }
+
+        // 表示
+        // プレイヤー1
+        printf("%9s", "Player1:");
+        printf("%2c", mark1);
+
+        if(mark1 != 'J'){
+            printf("%s%2d%s","[",num1,"]");
+        }else{
+            printf("%4s", "");
+        }
+
+        // 結果
+        printf("%2c", game);
+
+        // プレイヤー2
+        printf("%9s", "Player2:");
+        printf("%2c", mark2);
+
+        if(mark2 != 'J'){
+            printf("%s%2d%s","[",num2,"]");
+        }else{
+            printf("%4s", "");
+        }
+
+        // 総得点
+        printf("%11s%2s","総得点","-");
+
+        printf("%9s", "Player1:");
+        printf("%3d%s",point1,",");
+
+        printf("%9s", "Player2:");
+        printf("%3d",point2);
+
+        printf("\n");
     }
-    
+    printf("\n");
+    printf("%s%d\n","Player1の得点: ",point1);
+    printf("%s%d\n","Player2の得点: ",point2);
+    printf("\n");
+
+    return;
+}
+
+/*-------------------------------------------------
+[引 数] int : card
+[戻り値] markを表すchar型の文字
+[機 能] カードからマークを判別する
+-------------------------------------------------*/
+char MarkCheck(int card){
+    char mark;
+    if(0 <= card && card <= 12){
+        mark = 'H';
+    }
+    else if(13 <= card && card <= 25){
+        mark = 'D';
+    }
+    else if(26 <= card && card <= 38){
+        mark = 'S';
+    }
+    else if(39 <= card && card <= 51){
+        mark = 'C';
+    }
+    else if(card <= 52){
+        mark = 'J';
+    }
+
+    return(mark);
 }
