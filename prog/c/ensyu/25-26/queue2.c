@@ -22,7 +22,7 @@ void initQueue(Queue *q){
 ［戻り値］正常終了＝１，キューが満杯＝０
 ---------------------------------------*/
 int  enQueue(Queue *q, int data){
-  if((q->tail+1) % QUEUE_SIZE == q->head){
+  if((q->tail+1) % QUEUE_SIZE == q->head || q->head == -1 && q->tail == QUEUE_SIZE-2){
     return (0);
   }else{
     // 上限を超えたか判定
@@ -46,9 +46,9 @@ int  deQueue(Queue *q, int *data){
   }else{
     // 上限を超えたか判定
     q->head = (q->head+1) % QUEUE_SIZE;
-    // 格納
+    // 取り出し
     *data = q->storage[q->head];
-    
+
     return (1);
   }
 }
