@@ -80,12 +80,10 @@ void CardSet(int card[]){
 -------------------------------------------------*/
 void CreatePile(int card[], Stack* pile1, Stack* pile2){
 
-    int i = 0;    // カウンタ変数
-    while(i < PILE_SIZE*2){
-        push(pile1, card[i]);
-        i++;
-        push(pile2, card[i]);
-        i++;
+    int i;    // カウンタ変数
+    for(i = 0; i < PILE_SIZE; i++){
+        push(pile1, card[i*2]);
+        push(pile2, card[i*2+1]);
     }
 
     return;
@@ -121,20 +119,21 @@ void ShowResults(Stack* pile1, Stack* pile2){
         mark1 = MarkCheck(card1);
         mark2 = MarkCheck(card2);
 
-        num1 = card1 % 13 + 1;
-        num2 = card2 % 13 + 1;
+        // ジョーカーの処理
+        if(mark1 == 'J'){
+            num1 = 14;
+        }else{
+            num1 = card1 % 13 + 1;
+        }
+        
+        if(mark2 == 'J'){
+            num2 = 14;
+        }else{
+            num2 = card2 % 13 + 1;
+        }
 
-        if(mark1 == 'J' && mark2 == 'J'){
-            game = '=';
-            point1++;
-            point2++;
-        }else if(mark1 == 'J'){
-            game = '>';
-            point1 += 2;
-        }else if(mark2 == 'J'){
-            game = '<';
-            point2 += 2;
-        }else if(num1 > num2){
+        // 勝敗チェック
+        if(num1 > num2){
             game = '>';
             point1 += 2;
         }else if(num1 < num2){
@@ -145,7 +144,7 @@ void ShowResults(Stack* pile1, Stack* pile2){
             point1++;
             point2++;
         }
-
+        
         // 表示
         // プレイヤー1
         printf("%9s", "Player1:");
@@ -196,20 +195,21 @@ void ShowResults(Stack* pile1, Stack* pile2){
 -------------------------------------------------*/
 char MarkCheck(int card){
     char mark;
-    if(0 <= card && card <= 12){
-        mark = 'H';
-    }
-    else if(13 <= card && card <= 25){
-        mark = 'D';
-    }
-    else if(26 <= card && card <= 38){
-        mark = 'S';
-    }
-    else if(39 <= card && card <= 51){
-        mark = 'C';
-    }
-    else if(card <= 52){
-        mark = 'J';
+    switch (card / 13){
+        case (0):
+            mark = 'H';
+            break;
+        case (1):
+            mark = 'D';
+            break;
+        case (2):
+            mark = 'S';
+            break;
+        case (3):
+            mark = 'C';
+            break;
+        default:
+            mark = 'J';
     }
 
     return(mark);
