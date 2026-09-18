@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "queue.h"
 
 /*-----操作関数-----*/

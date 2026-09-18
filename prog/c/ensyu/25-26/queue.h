@@ -1,4 +1,4 @@
-#define QUEUE_SIZE 1001           // キューの大きさ(保存したい要素数+1)
+#define QUEUE_SIZE 1002           // キューの大きさ(保存したい要素数+1)
 
 typedef struct {
   char storage[QUEUE_SIZE];   // [queue1.c]文字データを格納する配列

@@ -14,7 +14,7 @@ main(){
   int i;            // カウンタ変数
   Queue str;        // 連結用
   Stack rev;        // 文字列の逆順並び替え用
-  char s[20];       // 入力される文字列
+  char s[22];       // 入力される文字列
   char *moji = s+1; // 先頭を排除した文字列
 
   // Queue, Stack の初期化
