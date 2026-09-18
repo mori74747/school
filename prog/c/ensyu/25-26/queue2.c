@@ -10,8 +10,8 @@
 ---------------------------------------*/
 void initQueue(Queue *q){
   // 先頭と末尾を初期化
-  q->head = -1;
-  q->tail = -1;
+  q->head = QUEUE_SIZE-1;
+  q->tail = QUEUE_SIZE-1;
   return;
 }
 
@@ -22,7 +22,7 @@ void initQueue(Queue *q){
 ［戻り値］正常終了＝１，キューが満杯＝０
 ---------------------------------------*/
 int  enQueue(Queue *q, int data){
-  if((q->tail+1) % QUEUE_SIZE == q->head || q->head == -1 && q->tail == QUEUE_SIZE-2){
+  if((q->tail+1) % QUEUE_SIZE == q->head){
     return (0);
   }else{
     // 上限を超えたか判定
