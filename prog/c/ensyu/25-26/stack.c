@@ -19,7 +19,7 @@ void initStack(Stack *s){
 ［　 　］data ： スタックｓへ格納するデータ
 ［戻り値］正常終了＝１，スタック・オーバーフロー＝０
 ---------------------------------------*/
-int push(Stack *s, int data){
+int push(Stack *s, char data){
     if(s->sp >= STACK_SIZE){
         return(0);
     }else{
@@ -35,7 +35,7 @@ int push(Stack *s, int data){
 ［　 　］data ： スタックｓから取り出したデータ
 ［戻り値］正常終了＝１，スタック・アンダーフロー＝０
 ---------------------------------------*/
-int pop(Stack *s, int *data){
+int pop(Stack *s, char *data){
     if(s->sp <= 0){
         return(0);
     }else{

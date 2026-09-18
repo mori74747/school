@@ -21,7 +21,7 @@ void initQueue(Queue *q){
 ［　 　］data ： キューqへ格納するデータ
 ［戻り値］正常終了＝１，キューが満杯＝０
 ---------------------------------------*/
-int  enQueue(Queue *q, int data){
+int  enQueue(Queue *q, char data){
   if((q->tail+1) % QUEUE_SIZE == q->head){
     return (0);
   }else{
@@ -39,7 +39,7 @@ int  enQueue(Queue *q, int data){
 ［　 　］data ： キューqから取り出したデータ
 ［戻り値］正常終了＝１，キューが空＝０
 ---------------------------------------*/
-int  deQueue(Queue *q, int *data){
+int  deQueue(Queue *q, char *data){
   if(q->head == q->tail){
     return (0);
   }else{

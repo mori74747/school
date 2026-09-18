@@ -10,8 +10,8 @@
 ---------------------------------------*/
 void initQueue(Queue *q){
   // 先頭と末尾を初期化
-  q->head = QUEUE_SIZE-1;
-  q->tail = QUEUE_SIZE-1;
+  q->head = QUEUE_SIZE;
+  q->tail = QUEUE_SIZE;
   return;
 }
 
