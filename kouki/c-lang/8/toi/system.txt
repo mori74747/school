@@ -1,0 +1,2 @@
+ The type of computer processing where the user of the system communicates 
+directly with the system to input data and instruction and receive output.

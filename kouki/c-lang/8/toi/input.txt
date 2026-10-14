@@ -1,0 +1,45 @@
+SYNOPSIS
+     #include <stdlib.h>
+
+     int rand(void);
+
+     void srand(unsigned int _s_e_e_d);
+
+     int rand_r(unsigned int *_s_e_e_d);
+
+DESCRIPTION
+     The  rand()  function  uses  a  multiplicative  congruential
+     random-number  generator with period 2**32 that returns suc-
+     cessive pseudo-random numbers in the range of 0 to  RAND_MAX
+     (defined in <stdlib.h>).
+
+     The  srand() function uses the argument _s_e_e_d as a seed for a
+     new sequence of pseudo-random numbers to be returned by sub-
+     sequent calls to rand(). If srand() is then called with  the
+     same  _s_e_e_d value, the sequence of pseudo-random numbers will
+     be repeated.  If  rand()  is  called  before  any  calls  to
+     srand()  have been made, the same sequence will be generated
+     as when srand() is first called with a _s_e_e_d value of 1.
+
+     The rand_r() function has the same functionality  as  rand()
+     except  that  a  pointer to a seed  _s_e_e_d must be supplied by
+     the caller. The seed to be supplied is not the same seed  as
+     in srand().
+
+USAGE
+     The  spectral  properties  of  rand()  are   limited.    The
+     drand48(3C)  function  provides  a  better,  more  elaborate
+     random-number generator.
+
+     The rand() is unsafe  in  multithreaded  applications.   The
+     rand_r()  function  is  MT-Safe, and should be used instead.
+     The srand() function is  unsafe  in  multithreaded  applica-
+     tions.
+
+     When compiling multithreaded applications,  the   _REENTRANT
+     flag  must be defined on the compile line.  This flag should
+     only be used in multithreaded applications.
+
+ATTRIBUTES
+     See attributes(5) for descriptions of the  following  attri-
+     butes:

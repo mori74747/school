@@ -28,7 +28,7 @@ int main()
   printf("z1 = %d\n", z1); // z1を標準出力へ表示 
   printf("z2 = %d\n", z2); // z2を標準出力へ表示 
 
-  out_fp = fopen(out_filename, "w"); // 出力先ファイルのオープン 
+  out_fp = fopen(out_filename, "a"); // 出力先ファイルのオープン 
   if (out_fp == NULL){
     fprintf(stderr, "%sがオープンできませんでした。\n", out_filename);
     exit(8); // 異常終了である非ゼロを返してプログラム終了 
