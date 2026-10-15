@@ -50,7 +50,7 @@ void setCellData(Cell *cell, int data){
 ［引 数］cell: 操作対象となるセルを指すポインタ
 ［戻り値］取り出した整数データ
 ---------------------------------------*/
-int  getCellData(Cell *cell){
+int getCellData(Cell *cell){
   return (cell->data);
 }
 
@@ -80,8 +80,12 @@ List *getNextCell(Cell *cell){
 ［戻り値］headが空リストの時:1
 ［　 　］headが空リストでないとき:0
 ---------------------------------------*/
-int  isEmptyList(List *head){
-  
+int isEmptyList(List *head){
+  if(head == NULL){
+    return (1);
+  }else{
+    return (0);
+  }
 }
 
 /*---------------------------------------
@@ -91,7 +95,7 @@ int  isEmptyList(List *head){
 ［戻り値］追加できたとき:1
 ［　 　］失敗したとき:0
 ---------------------------------------*/
-int  insertHead(List **head, int data);
+int insertHead(List **head, int data);
 
 /*---------------------------------------
 ［機 能］リストの先頭セルを削除する
@@ -99,7 +103,7 @@ int  insertHead(List **head, int data);
 ［戻り値］削除できたとき:1
 ［　 　］失敗したとき:0
 ---------------------------------------*/
-int  removeHead(List **head);
+int removeHead(List **head);
 
 /*---------------------------------------
 ［機 能］リストに格納されているデータを先頭から順に表示する
