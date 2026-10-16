@@ -22,15 +22,15 @@ main(int argc, char *argv[])
     file1 = argv[2];
     file2 = argv[3];
   }else{
-    printf("不正な入力です。\n");
-    return (2);
+    fprintf(stderr, "不正な入力です。\n");
+    exit (2);
   }
 
   // 入力ファイルを開く
   in_file = fopen(file1, "r");
   if(in_file == NULL){
-    printf("%sがオープンできませんでした。\n", file1);
-    return 2;
+    fprintf(stderr, "%sがオープンできませんでした。\n", file1);
+    exit (2);
   }
 
   // 出力ファイルを開く
@@ -41,9 +41,9 @@ main(int argc, char *argv[])
   }
 
   if(out_file == NULL){
-    printf("%sがオープンできませんでした。\n", file2);
+    fprintf(stderr, "%sがオープンできませんでした。\n", file2);
     fclose(in_file);
-    return (2);
+    exit (2);
   }
 
   // 入力ファイルから読み込み、出力ファイルへ書き込む

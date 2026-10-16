@@ -12,8 +12,8 @@ int main(int a, char *in_filename[])
   
   in_file = fopen(in_filename[1], "r");   // 入力ファイルのオープン
   if (in_file == NULL)  {
-    printf("%sがオープンできませんでした。\n", in_filename[1]);
-    exit(2); // 異常終了である非ゼロを返してプログラム終了  
+    fprintf(stderr, "%sがオープンできませんでした。\n", in_filename[1]);
+    exit (2); // 異常終了である非ゼロを返してプログラム終了  
   }
 
   // エラーを検出するか、ファイルの終わりに達するまで入力を続ける  
@@ -28,5 +28,5 @@ int main(int a, char *in_filename[])
   printf("文字数: %d\n", moji);
   printf("行数: %d\n", n);
 
-  return(0);
+  return (0);
 }
