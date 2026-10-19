@@ -1,7 +1,6 @@
 
   #include <stdio.h>
   #include <stdlib.h>
-  #include <ctype.h>
 
   main(int argc, char *argv[])
   {
@@ -42,7 +41,7 @@
       printf("%3s", "");
 
       for(i = 0; i < (int)n; i++){
-        if(isprint(data[i])){
+        if(' ' <= data[i] && data[i] <= '~'){
           printf("%c", data[i]);
         }else{
           printf(".");

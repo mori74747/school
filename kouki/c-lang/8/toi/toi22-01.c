@@ -21,7 +21,7 @@ int main(int a, char *in_filename[])
     moji++;
     if(ch == '\n'){
       n++;  // 行数をカウント
-    }
+    }   
   }
   fclose(in_file); // 入力ファイルのクローズ  
 
