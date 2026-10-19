@@ -1,15 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
+main()
 {
-  FILE *fp;
-  int i;
+  FILE *file1, *file2;
+  int num;
 
-  fp = fopen("number.txt", "w");
-  // 配列p[]から、POINT型データを10個"point.dat"に書き出す
-  fread(p, sizeof(POINT), 10, fp);
-  fclose(fp);
+  file1 = fopen("number.txt", "r");
+  if(file1 == NULL){
+    fprintf(stderr, "ファイルを開けません。\n");
+    exit (2);
+  }
 
-  return(0);
+  file2 = fopen("number.bin", "wb");
+  if(file2 == NULL){
+    fprintf(stderr, "ファイルを作成できません。\n");
+    fclose(file1);
+    exit (2);
+  }
+
+  while(fscanf(file1, "%d", &num) == 1){
+    fwrite(&num, sizeof(int), 1, file2);
+  }
+
+  fclose(file1);
+  fclose(file2);
+
+  return 0;
 }
