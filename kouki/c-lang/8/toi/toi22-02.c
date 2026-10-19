@@ -5,13 +5,13 @@
 
 main(int argc, char *argv[])
 {
-  FILE *in_file;
-  FILE *out_file;
-  char buff[256];
+  FILE *in_file;    // 入力ファイルのファイルポインタ
+  FILE *out_file;   // 出力ファイルのファイルポインタ
+  char buff[256];   // 入力用バッファ
 
-  int append = 0;
-  char *file1;
-  char *file2;
+  int append = 0;   // 追記するかどうかを表す (追記する...1/上書き...0)
+  char *file1;      // コピー元ファイル名
+  char *file2;      // コピー先ファイル名
 
   // オプションの確認
   if(argc == 3){
@@ -22,15 +22,17 @@ main(int argc, char *argv[])
     file1 = argv[2];
     file2 = argv[3];
   }else{
+    // エラー処理
     fprintf(stderr, "不正な入力です。\n");
-    exit (2);
+    exit(2);
   }
 
   // 入力ファイルを開く
   in_file = fopen(file1, "r");
+  // エラー処理
   if(in_file == NULL){
     fprintf(stderr, "%sがオープンできませんでした。\n", file1);
-    exit (2);
+    exit(2);
   }
 
   // 出力ファイルを開く
@@ -40,6 +42,7 @@ main(int argc, char *argv[])
     out_file = fopen(file2, "w");
   }
 
+  // エラー処理
   if(out_file == NULL){
     fprintf(stderr, "%sがオープンできませんでした。\n", file2);
     fclose(in_file);
@@ -51,7 +54,7 @@ main(int argc, char *argv[])
     fputs(buff, out_file);
   }
 
-  // ファイルを閉じる
+  // ファイルのクローズ
   fclose(in_file);
   fclose(out_file);
 

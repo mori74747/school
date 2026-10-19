@@ -3,28 +3,36 @@
 
 main()
 {
-  FILE *file1, *file2;
-  int num;
+  FILE *in_file;     // 入力ファイルのファイルポインタ
+  FILE *out_file;    // 出力ファイルのファイルポインタ
+  int num;           // データの読み込み用
 
-  file1 = fopen("number.bin", "r");
-  if(file1 == NULL){
+  // 入力ファイル(バイナリ)のオープン
+  in_file = fopen("number.bin", "r");
+  // エラー処理
+  if(in_file == NULL){
     fprintf(stderr, "ファイルを開けません。\n");
-    exit (2);
+    exit(2);
   }
 
-  file2 = fopen("rebmun.txt", "wb");
-  if(file2 == NULL){
+  // 出力ファイル(テキスト)のオープン
+  out_file = fopen("rebmun.txt", "w");
+  // エラー処理
+  if(out_file == NULL){
     fprintf(stderr, "ファイルを開けません。\n");
-    fclose(file1);
-    exit (2);
+    fclose(in_file);
+    exit(2);
   }
 
-  while(fread(&num, sizeof(int), 1, file1)){
-    fprintf(file2, "%d\n", num);
+  // バイナリデータの読み込み
+  while(fread(&num, sizeof(int), 1, in_file)){
+    // データをfile2へ書き込み
+    fprintf(out_file, "%d\n", num);
   }
 
-  fclose(file1);
-  fclose(file2);
+  // ファイルのクローズ
+  fclose(in_file);
+  fclose(out_file);
 
-  return 0;
+  return (0);
 }
