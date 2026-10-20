@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,23 +9,24 @@ main()
   int count = 0;      // データ数
   long long sum = 0;  // 合計
   double avg;         // 平均
+  char buff[256];     // 入力用バッファ変数
 
   // 入力ファイルのオープン
   in_file = fopen("sum.dat", "r");
-  // 例外処理
+  // エラー処理
   if(in_file == NULL){
     fprintf(stderr, "ファイルを開けません。\n");
-    exit(2);
+    exit(2); // 異常終了である非ゼロを返してプログラム終了
   }
 
   // 数値の読み込み→カウント
-  while(fscanf(in_file, "%d", &num) == 1){
+  while(fgets(buff, sizeof(buff), in_file) != NULL){
+    sscanf(buff, "%d", &num);
     sum += num;
     count++;
   }
 
-  // 入力ファイルのクローズ
-  fclose(in_file);
+  fclose(in_file); // 入力ファイルのクローズ
 
   // 結果の表示
   if(count == 0){
@@ -41,18 +41,17 @@ main()
 
     // 出力ファイルのオープン
     out_file = fopen("sum.ans", "w");
-    // 例外処理
+    // エラー処理
     if(out_file == NULL){
       fprintf(stderr, "出力ファイルを作成できません。\n");
-      exit(2);
+      exit(2); // 異常終了である非ゼロを返してプログラム終了
     }
 
     fprintf(out_file, "データ数: %d\n", count);
     fprintf(out_file, "合計%4s: %lld\n", "", sum);
     fprintf(out_file, "平均%4s: %.1f\n", "", avg);
   }
-  // 出力ファイルのクローズ
-  fclose(out_file);
+  fclose(out_file); // 出力ファイルのクローズ
 
   return (0);
 }

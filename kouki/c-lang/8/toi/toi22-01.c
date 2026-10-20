@@ -11,18 +11,28 @@ int main(int a, char *in_filename[])
   int n = 0;        // 行数
   
   in_file = fopen(in_filename[1], "r");   // 入力ファイルのオープン
-  if (in_file == NULL)  {
+  if(a != 2){
+    fprintf(stderr, "不正な入力です。\n");
+    exit(2);
+  }else if(in_file == NULL){
     fprintf(stderr, "%sがオープンできませんでした。\n", in_filename[1]);
-    exit (2); // 異常終了である非ゼロを返してプログラム終了  
+    exit(2); // 異常終了である非ゼロを返してプログラム終了  
   }
 
   // エラーを検出するか、ファイルの終わりに達するまで入力を続ける  
-  while ((ch = fgetc(in_file)) != EOF) {
+  while((ch = fgetc(in_file)) != EOF){
     moji++;
     if(ch == '\n'){
       n++;  // 行数をカウント
     }   
   }
+  
+  // エラー処理
+  if(ferror(in_file)){
+    fprintf(stderr, "%sの読み込み中にエラーが発生しました。\n", in_filename[1]);
+    exit(2); // 異常終了である非ゼロを返してプログラム終了
+  }
+
   fclose(in_file); // 入力ファイルのクローズ  
 
   printf("文字数: %d\n", moji);

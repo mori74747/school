@@ -9,17 +9,18 @@ main(int argc, char *argv[])
   int i;                    // カウンタ変数
   unsigned long addr = 0;   // 表示するデータの先頭アドレス
 
+  // エラー処理
   if(argc != 2){
     fprintf(stderr, "不正な入力です。\n");
-    exit(2);
+    exit(2); // 異常終了である非ゼロを返してプログラム終了
   }
 
   // 入力ファイルのオープン
-  in_file = fopen(argv[1], "rb");
-  // 例外処理
+  in_file = fopen(argv[1], "r");
+  // エラー処理
   if(in_file == NULL){
     fprintf(stderr, "ファイルを開けません。\n");
-    exit(2);
+    exit(2); // 異常終了である非ゼロを返してプログラム終了
   }
 
   // 表示
@@ -55,8 +56,15 @@ main(int argc, char *argv[])
     putchar('\n');
     addr += 16;
   }
-  //　入力ファイルのクローズ
-  fclose(in_file);
+
+  // エラー処理
+  if(ferror(in_file)){
+    fprintf(stderr, "\n%sの読み込み中にエラーが発生しました。\n", argv[1]);
+    fclose(in_file);    // 入力ファイルのクローズ
+    exit(2); // 異常終了である非ゼロを返してプログラム終了
+  }
+
+  fclose(in_file); // 入力ファイルのクローズ
 
   return (0);
 }
