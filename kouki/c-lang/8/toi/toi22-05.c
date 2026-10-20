@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 
     // アドレスの表示
     for(i = 0; i < 16; i++){
-      if(i < n){
+      if((size_t)i < n){
         printf("%02X ", data[i]);
       }else{
         printf("%3s","");

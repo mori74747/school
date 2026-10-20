@@ -14,14 +14,14 @@ main(int argc, char *argv[])
   char *file2;      // コピー先ファイル名
 
   // オプションの確認
-  if(argc == 3){  // ファイルに上書きする
-    file1 = argv[1];
-    file2 = argv[2];
-  }else if(argc == 4 && argv[1][0] == '-' && argv[1][1] == 'a'){  // ファイルに追記する
+  if(argc == 4 && !strcmp(argv[1], "-a")){  // ファイルに追記する
     append = 1;  
     file1 = argv[2];
     file2 = argv[3];
-  }else{
+  }else if(argc == 3){  // ファイルに上書きする
+    file1 = argv[1];
+    file2 = argv[2];
+  }else {
     // エラー処理
     fprintf(stderr, "不正な入力です。\n");
     exit(2); // 異常終了である非ゼロを返してプログラム終了
