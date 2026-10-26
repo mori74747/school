@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import math
 
-# ３次元データ
+# ３次元データ(既に計算済みデータ)
 # cube = [
 #     [-77.4519,-18.3013,-34.1506],
 #     [-34.1506,-68.3013,40.8494],
@@ -90,7 +90,7 @@ Cy = 100
 d = 1000
 point = []
 
-# 回転
+# 回転と移動
 move(cube,-50,-50,-50)
 rotateX(cube,30)
 rotateY(cube,30)
