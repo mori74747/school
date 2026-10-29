@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "list.h"
-
+#include <stdlib.h>
 
 /*-----操作関数-----*/
 
@@ -139,7 +138,6 @@ void printList(List *head){
       printf(" -> ");
     }
   }
-  putchar('\n');
   return;
 }
 
@@ -160,20 +158,13 @@ List **getNextCellHead(Cell *cell){
 //------------------------------------------------------------------------
 int  insertUpOrder(List **head, int data){
   List **p = head;  // セルへのポインタを格納しているアドレス
-  Cell *newCell;    // 追加するセルのポインタ
 
   // 追加するデータと既存のセルのデータを比較し、昇順に挿入する
   while(*p != getEmptyList() && getCellData(*p) < data){
     p = getNextCellHead(*p);
   }
-  newCell = createCell(data, *p);
-
-  if(newCell == getEmptyList()){  // 追加できなかった時
-    return (0);
-  }
-
-  *p = newCell;  // 探索したリストのポインタに新しいセルのアドレスを追加
-  return (1);
+  
+  return (insertHead(p, data));
 }
 
 //------------------------------------------------------------------------
@@ -191,8 +182,8 @@ int removeTail(List **head){
     p = getNextCellHead(*p);
   }
   
-  removeHead(p);  // 最後尾のセルを指定して削除
-  return (1);
+  // 最後尾のセルを指定して削除
+  return (removeHead(p));
 }
 
 //------------------------------------------------------------------------
@@ -201,8 +192,6 @@ int removeTail(List **head){
 //  ［戻り値］なし
 //------------------------------------------------------------------------
 void removeList(List **head){
-  while(!isEmptyList(*head)){
-    removeHead(head);   // 先頭セルを削除
-  }
+  while(removeHead(head));
   return;
 }

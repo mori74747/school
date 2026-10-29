@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <hamakou.h>
+#include "list.h"
 #include "stack27.h"
 
 main()
