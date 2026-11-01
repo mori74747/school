@@ -94,7 +94,7 @@ int isEmptyList(List *head){
 //------------------------------------------------------------------------
 int insertHead(List **head, int data){
   Cell *p = createCell(data, *head);
-  if(p == getEmptyList()){  // 失敗したとき
+  if(isEmptyList(p)){  // 失敗したとき
     return (0);
   }
   *head = p;      // headを新しいセルのポインタに更新
@@ -129,14 +129,18 @@ void printList(List *head){
   List* a = head;       // 表示するセルのポインタ
   int CellData;         // 表示するセルのデータ
 
-  while(!isEmptyList(a)){   // セルのポインタが空になるまで
+  if(!isEmptyList(a)){
     CellData = getCellData(a);
     printf("%d", CellData);   // セルデータの表示
 
     a = getNextCell(a); // 次のセルのポインタ
-    if(!isEmptyList(a)){
-      printf(" -> ");
-    }
+  }
+  while(!isEmptyList(a)){   // セルのポインタが空になるまで
+    printf(" -> ");
+    CellData = getCellData(a);
+    printf("%d", CellData);   // セルデータの表示
+
+    a = getNextCell(a); // 次のセルのポインタ
   }
   return;
 }
@@ -175,7 +179,7 @@ int  insertUpOrder(List **head, int data){
 //------------------------------------------------------------------------
 int removeTail(List **head){
   List **p = head;
-  if(*p == getEmptyList()){  // リストが空リストのとき
+  if(isEmptyList(*p)){  // リストが空リストのとき
     return (0);
   }
   while(*getNextCellHead(*p) != getEmptyList()){

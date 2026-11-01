@@ -45,4 +45,5 @@ int pop(Stack *s, int *data){
 ---------------------------------------*/  
 void freeStack(Stack *s){
   removeList(s);
+  return;
 }
