@@ -40,6 +40,7 @@ int rbSearchRec(char *target, char *words[], int lower, int upper)
 //  arrocWords() と freeWords() の外部仕様は
 //  Cマスター9 [探索] の課題A(1) で実装したものと同じ
 // --------------------------------------------------------------------------
+
 char **allocWords(int *n)
 {
   char line[512], **words;
