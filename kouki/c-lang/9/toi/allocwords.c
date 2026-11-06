@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "allocwords.h"
 
 /*-----------------------------------------------------------------------------------------------
@@ -16,13 +17,21 @@
 char **allocWords(int *line_nums){
   char buff[256];  // 入力用バッファ
   char **p;        // 行を入力する配列へのポインタ
-  int count = 0;   // 正常に入力した文字列の数
+  *line_nums = 0;  // 入力した文字列の数
+  int i = 0;       // カウンタ変数
+
+  // 行数の入力
+  *line_nums = getint();
+  
+  // 行数分のメモリ確保
+  p = (char **)malloc(sizeof(char *) * (*line_nums + 1));
 
   while(fgets(buff, sizeof(buff), stdin) != NULL){
-    buff[strcspn(buff, "\n")] = '\0';
-    *p = (char *)malloc(sizeof(char));
+    p[i] = (char *)malloc(sizeof(char) * (strlen(buff) + 1));
+    if(*p == NULL){
+      fprintf(stderr, "error: メモリの確保に失敗しました\n");
+    }
   }
-  
 }
 
 /*-----------------------------------------------------------------------------------------------

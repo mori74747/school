@@ -13,17 +13,17 @@ int main(int argc, char *argv[])
   } 
   sscanf(argv[1], "%d", &n);
 
-  mvHanoi(n, 'A',    ,    );
+  mvHanoi(n, 'A', 'B', 'C');
 
   return(0);
 }
 
 void mvHanoi(int n, char from, char work, char to)
 {
-  if (      ) {
-                                   ;
+  if (0 < n) {
+    mvHanoi(n-1, from, to, work);
     printf("%c -> %c\n", from, to);
-                                   ;
+    mvHanoi(n-1, work, from, to);
   }
   return;
 }
