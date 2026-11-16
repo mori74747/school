@@ -3,17 +3,17 @@
 
 main()
 {
-  int i;
-  int n = 10000000;
+  int i;                // カウンタ変数
+  int n = 10000000;     // 分割数
   double x, w, sum, pi;
 
-  w = 1.0 / n;
-  sum = 0.0;
+  w = 1.0 / n;  // 事前に計算
+  sum = 0.0;    // 初期化
 
-  /* 小さい値から順番に加算する */
-  for (i = n - 1; i >= 0; i--) {
-      x = i * w;
-      sum += sqrt(1.0 - x * x) * w;
+  // 小さい値から順番に加算する
+  for(i = n-1; i >= 0; i--){
+    x = i * w;
+    sum += sqrt(1.0 - x * x) * w;
   }
 
   pi = 4.0 * sum;
