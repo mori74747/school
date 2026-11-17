@@ -28,5 +28,5 @@ main()
 
   printf("円周率 pi = %.10f\n", pi);
 
-  return 0;
+  return (0);
 }

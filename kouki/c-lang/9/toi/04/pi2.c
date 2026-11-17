@@ -21,5 +21,5 @@ main()
   printf("分割数 n = %d\n", n);
   printf("円周率 pi = %.10f\n", pi);
 
-  return 0;
+  return (0);
 }
