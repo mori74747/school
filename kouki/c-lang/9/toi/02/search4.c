@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
   high = line_nums - 1;
 
   // 二分探索
-  while(low <= high){
+  while(low <= high && result == -1){
     mid = (low + high) / 2;
 
     if(strcmp(lines[mid], argv[1]) == 0){

@@ -17,10 +17,13 @@
 char **allocWords(int *line_nums){
   char buff[257];  // 入力用バッファ
   char **p;        // 文字列配列へのポインタ
+  char *line;      // 確保するときのポインタ
   int n;           // 入力する文字列の数
 
-  *line_nums = 0;
+  *line_nums = 0;  // 入力できた数
+  line = NULL;
 
+  // 入力-エラー処理
   if(fgets(buff, sizeof(buff), stdin) == NULL){
     return (NULL);
   }
@@ -35,32 +38,36 @@ char **allocWords(int *line_nums){
   // ポインタ配列のメモリ確保
   p = (char **)malloc(sizeof(char *) * (n + 1));
 
+  // エラー処理
   if(p == NULL){
     fprintf(stderr, "error: メモリの確保に失敗しました\n");
     return (NULL);
   }
 
   // 文字列を1行ずつ入力
-  while(*line_nums < n && fgets(buff, sizeof(buff), stdin) != NULL){
-    // 改行文字を取り除く
-    buff[strcspn(buff, "\n")] = '\0';
-    // 文字列用のメモリ確保
-    p[*line_nums] = (char *)malloc(sizeof(char) * (strlen(buff) + 1));
+  do {
+    if(*line_nums < n && fgets(buff, sizeof(buff), stdin) != NULL){
 
-    // メモリ確保失敗時
-    if(p[*line_nums] == NULL){
-      fprintf(stderr, "error: メモリの確保に失敗しました\n");
+      // 改行文字を取り除く
+      buff[strcspn(buff, "\n")] = '\0';
+      // 文字列用のメモリ確保
+      line = (char *)malloc(strlen(buff) + 1);
 
-      // 確保済みの文字列を解放
-      freeWords(p, *line_nums);
+      if(line != NULL){
+        p[*line_nums] = line;
+        // 文字列をコピー
+        strcpy(p[*line_nums], buff);
+        // 入力行数を増やす
+        (*line_nums)++;
 
-      return (NULL);
+      }else{
+        fprintf(stderr, "error: メモリの確保に失敗しました\n");
+      }
+    }else{
+      line = NULL;
     }
-    // 文字列をコピー
-    strcpy(p[*line_nums], buff);
-    // 入力行数を増やす
-    (*line_nums)++;
-  }
+
+  } while(*line_nums < n && line != NULL);
 
   // すべての文字列が入力できたか確認
   if(*line_nums < n){
