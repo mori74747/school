@@ -52,12 +52,7 @@ char **allocWords(int *line_nums){
       fprintf(stderr, "error: メモリの確保に失敗しました\n");
 
       // 確保済みの文字列を解放
-      for(int j = 0; j < *line_nums; j++){
-        free(p[j]);
-      }
-
-      free(p);
-      *line_nums = 0;
+      freeWords(p, *line_nums);
 
       return (NULL);
     }
@@ -69,13 +64,8 @@ char **allocWords(int *line_nums){
 
   // すべての文字列が入力できたか確認
   if(*line_nums < n){
-
     // 確保済みの文字列を解放
-    for(int j = 0; j < *line_nums; j++){
-        free(p[j]);
-    }
-    free(p);
-    *line_nums = 0;
+    freeWords(p, *line_nums);
 
     return (NULL);
   }

@@ -33,12 +33,11 @@ int main(int argc, char *argv[]){
     mid = (low + high) / 2;
 
     if(strcmp(lines[mid], argv[1]) == 0){
-        result = mid;
-        break;
+      result = mid;
     }else if(strcmp(lines[mid], argv[1]) < 0){
-        low = mid + 1;
+      low = mid + 1;
     }else{
-        high = mid - 1;
+      high = mid - 1;
     }
   }
 
