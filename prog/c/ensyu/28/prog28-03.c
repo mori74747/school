@@ -22,5 +22,13 @@ int main(int argc, char *argv[])
 
 double ipow(double a, int x)
 {
-
+  if(x == 0){
+    return (1);
+  }else if(x > 0){
+    // aを掛けて再帰
+    return (a * ipow(a, x-1));
+  }else if(x < 0){
+    // 1/aを掛けて再帰
+    return ((1/a) * ipow(a, x+1));
+  }
 }

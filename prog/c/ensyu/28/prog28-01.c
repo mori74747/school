@@ -20,5 +20,11 @@ int main(int argc, char *argv[])
 
 int sankaku(int n)
 {
-
+  if(n > 0){
+    // 再帰処理
+    // 現在のnを足して、さらに小さいnの加算を進める
+    return(sankaku(n-1) + n);
+  }else{
+    return (0);
+  }
 }

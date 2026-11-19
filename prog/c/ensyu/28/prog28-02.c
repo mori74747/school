@@ -13,12 +13,17 @@ int main(int argc, char *argv[])
   }
   sscanf(argv[1], "%d", &n);
 
-  printf("%ld\n", fact(n));
+  printf("%lld\n", fact(n));
 
   return(0);
 }
 
 long long fact(int n)
 {
-
+  // 基底条件
+  if(n == 0 || n == 1){
+    return (1);
+  }else{
+    return (n * fact(n-1));
+  }
 }

@@ -21,5 +21,9 @@ int main(int argc, char *argv[])
 
 int combi(int n, int r)
 {
-
+  if(r == 0 || r == n){
+    return (1);
+  }else{
+    return (combi(n-1,r-1) + combi(n-1,r));
+  }
 }

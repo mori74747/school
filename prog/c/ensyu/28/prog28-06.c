@@ -21,5 +21,9 @@ int main(int argc, char *argv[])
 
 int gcm(int m, int n)
 {
-
+  if(n == 0){
+    return (m);
+  }else if(n > 0){
+    gcm(n, m%n);
+  }
 }
